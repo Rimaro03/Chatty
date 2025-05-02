@@ -1,5 +1,4 @@
 package com.example.chatty
-
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Bundle
@@ -41,25 +40,5 @@ class MainActivity : AppCompatActivity() {
             messageViewModel.sendMessage(Message(message, false))
             messageInput.text.clear()
         }
-
-        //notifications
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            // Create the NotificationChannel.
-            val name = "New message"
-            val descriptionText = "New message has arrived"
-            val importance = NotificationManager.IMPORTANCE_HIGH
-            val mChannel = NotificationChannel(1.toString(), name, importance)
-            mChannel.description = descriptionText
-            // Register the channel with the system. You can't change the importance
-            // or other notification behaviors after this.
-            val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(mChannel)
-        }
-
-        var builder = NotificationCompat.Builder(this, 1.toString())
-            .setSmallIcon(R.drawable.ic_message)
-            .setContentTitle("New message")
-            .setContentText("New message")
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
     }
 }
