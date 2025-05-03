@@ -1,16 +1,18 @@
 package com.example.chatty
-import android.app.NotificationChannel
-import android.app.NotificationManager
+import android.graphics.Rect
 import android.os.Bundle
+import android.util.Log
+import android.view.View
+import android.view.WindowManager
 import android.widget.Button
 import android.widget.EditText
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatty.data.Message
-import android.os.Build
-import androidx.core.app.NotificationCompat
+
 
 class MainActivity : AppCompatActivity() {
     private val messageViewModel: MessageViewModel by viewModels{ MessageViewModel.Factory }
@@ -39,6 +41,15 @@ class MainActivity : AppCompatActivity() {
             val message = messageInput.text.toString()
             messageViewModel.sendMessage(Message(message, false))
             messageInput.text.clear()
+        }
+
+        // debug
+        val rootView = window.decorView.findViewById<View>(android.R.id.content)
+        rootView.viewTreeObserver.addOnGlobalLayoutListener {
+            val r = Rect()
+            rootView.getWindowVisibleDisplayFrame(r)
+            val heightDiff = rootView.rootView.height - r.height()
+            Log.d("KeyboardDebug", "Height diff: $heightDiff")
         }
     }
 }
