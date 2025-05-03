@@ -3,6 +3,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
@@ -36,5 +37,19 @@ class MainActivity : AppCompatActivity() {
             messageViewModel.sendMessage(Message(message, false))
             messageInput.text.clear()
         }
+
+        // request notifications permission
+        val requestPermissionLauncher =
+            registerForActivityResult(
+                ActivityResultContracts.RequestPermission()
+            ) { isGranted: Boolean ->
+                if (!isGranted) {
+                    // not necessary to kill the app... but for now it's fine
+                    this.finishAffinity()
+                }
+            }
+
+        // TODO: the following method is available only from API level 33, do somethink if 30 <= apiLevel <= 32
+        requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
     }
 }
