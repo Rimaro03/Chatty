@@ -19,18 +19,16 @@ class NotificationHelper(private val context: Context) {
     }
 
     fun setupChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            // Create the NotificationChannel.
-            notificationManager.createNotificationChannel(
-                NotificationChannel(
-                    CHANNEL_NEW_MESSAGE,
-                    "New Message",
-                    NotificationManager.IMPORTANCE_HIGH,
-                ).apply {
-                    description = "New message has arrived"
-                }
-            )
-        }
+        // Create the NotificationChannel.
+        notificationManager.createNotificationChannel(
+            NotificationChannel(
+                CHANNEL_NEW_MESSAGE,
+                "New Message",
+                NotificationManager.IMPORTANCE_HIGH,
+            ).apply {
+                description = "New message has arrived"
+            }
+        )
     }
 
     fun showNotification(
