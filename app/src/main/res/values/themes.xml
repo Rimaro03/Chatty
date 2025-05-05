@@ -6,4 +6,5 @@
     </style>
 
     <style name="Theme.Chatty" parent="Base.Theme.Chatty" />
+
 </resources>

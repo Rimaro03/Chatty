@@ -17,6 +17,9 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
+        // Toolbar
+        setSupportActionBar(findViewById(R.id.toolbar))
+
         // message RecyclerView
         val messageRecyclerView = findViewById<RecyclerView>(R.id.message_rv_list)
         val messageAdapter = MessageAdapter(mutableListOf<Message>())

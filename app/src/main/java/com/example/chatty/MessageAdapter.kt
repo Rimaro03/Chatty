@@ -4,8 +4,9 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatty.data.Message
 
@@ -16,11 +17,22 @@ class MessageAdapter(private val messageList: List<Message>) : RecyclerView.Adap
 
         fun bind(index: Int, message: Message){
             messageTV.text = message.content
-            if(message.isIncoming) {
-                messageTV.gravity = Gravity.START
 
-            } else {
-                messageTV.gravity = Gravity.END
+            // change constraints to place incoming message on the left
+            if(message.isIncoming) {
+                val constraintLayout: ConstraintLayout = itemView.findViewById(R.id.message_layout)
+                val constraintSet = ConstraintSet()
+                constraintSet.clone(constraintLayout)
+
+                constraintSet.clear(R.id.message_tv, ConstraintSet.START)
+                constraintSet.clear(R.id.message_tv, ConstraintSet.END)
+
+                constraintSet.connect(R.id.message_tv, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)
+                constraintSet.connect(R.id.message_tv, ConstraintSet.END, R.id.incoming_msg_guideline, ConstraintSet.START)
+
+                constraintSet.applyTo(constraintLayout)
+
+                messageTV.gravity = Gravity.START
             }
         }
     }

@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">chatty</string>
+
+    <!-- Input layout -->
+    <string name="edit_text_hint">Type here</string>
+    <string name="send_button_text">Send</string>
 </resources>

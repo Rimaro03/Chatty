@@ -4,20 +4,30 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:fitsSystemWindows="true"
-    android:padding="5dp">
+    android:fitsSystemWindows="true">
+
+    <!-- Top Appbar -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <!-- Message list -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/message_rv_list"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
         app:layout_constraintBottom_toTopOf="@+id/input_layout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layoutManager="LinearLayoutManager"
         tools:listitem="@layout/message_item"
+        android:padding="10dp"
         />
 
     <!-- Input section -->
@@ -27,14 +37,15 @@
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        android:padding="10dp">
 
         <EditText
             android:id="@+id/message_input"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="Type here"
+            android:hint="@string/edit_text_hint"
             android:imeOptions="actionDone"
             android:importantForAutofill="no"
             android:inputType="text"
@@ -45,6 +56,7 @@
             android:id="@+id/send_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Send"/>
+            android:text="@string/send_button_text"/>
     </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

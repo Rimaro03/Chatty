@@ -10,18 +10,15 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.chatty.data.Message
-import com.example.chatty.data.messageList
 import com.google.ai.client.generativeai.GenerativeModel
 import kotlinx.coroutines.launch
 
 class MessageViewModel(private val applicationContext: Context): ViewModel() {
     private val _messageList = MutableLiveData<List<Message>>(emptyList())
     val messageList: LiveData<List<Message>> = _messageList
-    private lateinit var notificationHelper: NotificationHelper
+    private var notificationHelper: NotificationHelper = NotificationHelper(context = applicationContext)
 
     init {
-        _messageList.value = messageList()
-        notificationHelper = NotificationHelper(context = applicationContext)
         notificationHelper.setupChannel()
     }
 
