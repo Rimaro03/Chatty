@@ -11,6 +11,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.chatty.data.Message
 import com.google.ai.client.generativeai.GenerativeModel
+import com.google.ai.client.generativeai.type.content
 import kotlinx.coroutines.launch
 
 class MessageViewModel(private val applicationContext: Context): ViewModel() {
@@ -33,7 +34,10 @@ class MessageViewModel(private val applicationContext: Context): ViewModel() {
 
         val generativeModel = GenerativeModel(
             modelName = "gemini-2.0-flash",
-            apiKey = BuildConfig.API_KEY
+            apiKey = BuildConfig.API_KEY,
+            systemInstruction = content {
+               text("Please respond to this conversation like an old friend of mine that I'm texring with.")
+            }
         )
 
         viewModelScope.launch {
