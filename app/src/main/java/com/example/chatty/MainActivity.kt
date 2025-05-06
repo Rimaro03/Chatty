@@ -1,13 +1,18 @@
 package com.example.chatty
+import android.Manifest
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.core.content.PermissionChecker
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatty.data.Message
+import com.google.android.material.color.DynamicColors
 
 class MainActivity : AppCompatActivity() {
     private val messageViewModel: MessageViewModel by viewModels{ MessageViewModel.Factory }
@@ -15,10 +20,17 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        // Use device dynamic colors if available
+        DynamicColors.applyToActivityIfAvailable(this)
         setContentView(R.layout.activity_main)
-
         // Toolbar
         setSupportActionBar(findViewById(R.id.toolbar))
+
+        // Check for notifications permission
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PermissionChecker.PERMISSION_GRANTED)
+                requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), REQUEST_CODE)
+        }
 
         // message RecyclerView
         val messageRecyclerView = findViewById<RecyclerView>(R.id.message_rv_list)
@@ -40,19 +52,25 @@ class MainActivity : AppCompatActivity() {
             messageViewModel.sendMessage(Message(message, false))
             messageInput.text.clear()
         }
+    }
 
-        // request notifications permission
-        val requestPermissionLauncher =
-            registerForActivityResult(
-                ActivityResultContracts.RequestPermission()
-            ) { isGranted: Boolean ->
-                if (!isGranted) {
-                    // not necessary to kill the app... but for now it's fine
-                    this.finishAffinity()
-                }
-            }
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray)
+    {
+        val p = grantResults[0] == PermissionChecker.PERMISSION_GRANTED
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (grantResults[0] != PermissionChecker.PERMISSION_GRANTED) {
+            // not necessary to kill the app... but for now it's fine
+            this.finishAffinity()
+        }
+        Log.i(TAG, "Notification runtime permission granted: $p")
+    }
 
-        // TODO: the following method is available only from API level 33, do somethink if 30 <= apiLevel <= 32
-        requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+    companion object
+    {
+        // Request code for the POST_NOTIFICATIONS permission
+        private const val REQUEST_CODE = 21983
+
+        // Logcat tag
+        private val TAG = MainActivity::class.simpleName
     }
 }
