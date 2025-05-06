@@ -12,7 +12,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatty.data.Message
-import com.google.android.material.color.DynamicColors
 
 class MainActivity : AppCompatActivity() {
     private val messageViewModel: MessageViewModel by viewModels{ MessageViewModel.Factory }
@@ -20,15 +19,13 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        // Use device dynamic colors if available
-        DynamicColors.applyToActivityIfAvailable(this)
         setContentView(R.layout.activity_main)
         // Toolbar
         setSupportActionBar(findViewById(R.id.toolbar))
 
         // Check for notifications permission
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PermissionChecker.PERMISSION_GRANTED)
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PermissionChecker.PERMISSION_GRANTED)
                 requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), REQUEST_CODE)
         }
 

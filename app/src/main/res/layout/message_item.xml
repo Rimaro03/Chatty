@@ -29,6 +29,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="@+id/outgoing_msg_guideline"
         app:layout_constraintEnd_toEndOf="parent"
-        android:gravity="end"/>
+        android:gravity="end"
+        style="@style/MessageStyle" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
