@@ -1,13 +1,9 @@
 package com.example.chatty
 
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatty.data.Message
 
@@ -16,7 +12,7 @@ class MessageAdapter(private val messageList: List<Message>) : RecyclerView.Adap
     class OutgoingMessageViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         private val messageTV: TextView = itemView.findViewById(R.id.out_msg_tv)
 
-        fun bind(index: Int, message: Message){
+        fun bind(message: Message){
             messageTV.text = message.content
         }
     }
@@ -24,7 +20,7 @@ class MessageAdapter(private val messageList: List<Message>) : RecyclerView.Adap
     class IncomingMessageViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         private val messageTV: TextView = itemView.findViewById(R.id.in_msg_tv)
 
-        fun bind(index: Int, message: Message){
+        fun bind(message: Message){
             messageTV.text = message.content
         }
     }
@@ -47,8 +43,8 @@ class MessageAdapter(private val messageList: List<Message>) : RecyclerView.Adap
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when(holder) {
-            is OutgoingMessageViewHolder -> holder.bind(position, messageList[position])
-            is IncomingMessageViewHolder -> holder.bind(position, messageList[position])
+            is OutgoingMessageViewHolder -> holder.bind(messageList[position])
+            is IncomingMessageViewHolder -> holder.bind(messageList[position])
         }
     }
 
