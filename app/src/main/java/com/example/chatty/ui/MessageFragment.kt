@@ -1,7 +1,6 @@
-package com.example.chatty
+package com.example.chatty.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,11 +10,16 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.chatty.MessageAdapter
+import com.example.chatty.MessageViewModel
+import com.example.chatty.R
 import com.example.chatty.data.Message
-import kotlin.getValue
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 
 class MessageFragment: Fragment() {
-    private val messageViewModel: MessageViewModel by viewModels{ MessageViewModel.Factory }
+    private val messageViewModel: MessageViewModel by viewModels { MessageViewModel.Companion.Factory }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,15 +39,17 @@ class MessageFragment: Fragment() {
         }
 
         //input field
-        val messageInput = view.findViewById<EditText>(R.id.message_input)
+        val textInput = view.findViewById<TextInputLayout>(R.id.message_input)
+        val editText = TextInputEditText(textInput.context)
+
         val sendButton = view.findViewById<Button>(R.id.send_btn)
 
         sendButton.setOnClickListener {
-            if(messageInput.text.toString().isEmpty()) return@setOnClickListener
+            if(textInput.editText?.text.toString().isEmpty()) return@setOnClickListener
 
-            val message = messageInput.text.toString()
+            val message = textInput.editText?.text.toString()
             messageViewModel.sendMessage(Message(message, false))
-            messageInput.text.clear()
+            textInput.editText?.text?.clear()
         }
 
         return view
