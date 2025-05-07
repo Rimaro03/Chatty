@@ -5,7 +5,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
@@ -16,8 +15,10 @@ import kotlinx.coroutines.launch
 
 class MessageViewModel(private val applicationContext: Context): ViewModel() {
     private val _messageList = MutableLiveData<List<Message>>(emptyList())
-    val messageList: LiveData<List<Message>> = _messageList
-    private var notificationHelper: NotificationHelper = NotificationHelper(context = applicationContext)
+    val messageList: LiveData<List<Message>> get() = _messageList
+
+    private var notificationHelper: NotificationHelper =
+        NotificationHelper(context = applicationContext)
 
     init {
         notificationHelper.setupChannel()
@@ -36,7 +37,7 @@ class MessageViewModel(private val applicationContext: Context): ViewModel() {
             modelName = "gemini-2.0-flash",
             apiKey = BuildConfig.API_KEY,
             systemInstruction = content {
-               text("Please respond to this conversation like an old friend of mine that I'm texring with.")
+                text("Please respond to this conversation like an old friend of mine that I'm texring with.")
             }
         )
 
@@ -53,7 +54,12 @@ class MessageViewModel(private val applicationContext: Context): ViewModel() {
                 addMessage(Message(content = response, isIncoming = true))
             }
 
-            notificationHelper.showNotification(Message(content = response ?: "", isIncoming = true))
+            notificationHelper.showNotification(
+                Message(
+                    content = response ?: "",
+                    isIncoming = true
+                )
+            )
         }
     }
 
@@ -64,7 +70,8 @@ class MessageViewModel(private val applicationContext: Context): ViewModel() {
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
-                val applicationContext = (this[APPLICATION_KEY] as ChattyApplication).applicationContext
+                val applicationContext =
+                    (this[ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY] as ChattyApplication).applicationContext
                 MessageViewModel(
                     applicationContext = applicationContext
                 )

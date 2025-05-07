@@ -7,7 +7,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatty.data.Message
 
-class MessageAdapter(private val messageList: List<Message>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class MessageAdapter(private var messageList: List<Message>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     class OutgoingMessageViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         private val messageTV: TextView = itemView.findViewById(R.id.out_msg_tv)
@@ -23,6 +23,11 @@ class MessageAdapter(private val messageList: List<Message>) : RecyclerView.Adap
         fun bind(message: Message){
             messageTV.text = message.content
         }
+    }
+
+    fun submitList(newList: List<Message>) {
+        messageList = newList
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
