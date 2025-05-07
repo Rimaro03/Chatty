@@ -25,7 +25,6 @@
         app:layout_constraintBottom_toTopOf="@+id/input_layout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layoutManager="LinearLayoutManager"
         tools:listitem="@layout/out_msg_item"
         android:padding="10dp"
         />

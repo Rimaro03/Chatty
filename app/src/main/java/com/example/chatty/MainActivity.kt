@@ -10,6 +10,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatty.data.Message
 
@@ -31,6 +32,9 @@ class MainActivity : AppCompatActivity() {
 
         // message RecyclerView
         val messageRecyclerView = findViewById<RecyclerView>(R.id.message_rv_list)
+        val linearLayoutManager = LinearLayoutManager(this)
+        linearLayoutManager.stackFromEnd = true
+        messageRecyclerView.layoutManager = linearLayoutManager
         val messageAdapter = MessageAdapter(mutableListOf<Message>())
         messageRecyclerView.adapter = messageAdapter
 
