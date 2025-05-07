@@ -4,47 +4,62 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatty.data.Message
 
-class MessageAdapter(private val messageList: List<Message>) : RecyclerView.Adapter<MessageAdapter.MessageViewHolder>() {
+class MessageAdapter(private val messageList: List<Message>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    class MessageViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
-        private val messageTV: TextView = itemView.findViewById(R.id.message_tv)
+    class OutgoingMessageViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
+        private val messageTV: TextView = itemView.findViewById(R.id.out_msg_tv)
 
         fun bind(index: Int, message: Message){
             messageTV.text = message.content
-
-            // change constraints to place incoming message on the left
-            if(message.isIncoming) {
-                val constraintLayout: ConstraintLayout = itemView.findViewById(R.id.message_layout)
-                val constraintSet = ConstraintSet()
-                constraintSet.clone(constraintLayout)
-
-                constraintSet.clear(R.id.message_tv, ConstraintSet.START)
-                constraintSet.clear(R.id.message_tv, ConstraintSet.END)
-
-                constraintSet.connect(R.id.message_tv, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)
-                constraintSet.connect(R.id.message_tv, ConstraintSet.END, R.id.incoming_msg_guideline, ConstraintSet.START)
-
-                constraintSet.applyTo(constraintLayout)
-
-                messageTV.gravity = Gravity.START
-            }
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.message_item, parent, false)
-        return MessageViewHolder(view)
+    class IncomingMessageViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
+        private val messageTV: TextView = itemView.findViewById(R.id.in_msg_tv)
+
+        fun bind(index: Int, message: Message){
+            messageTV.text = message.content
+        }
     }
 
-    override fun onBindViewHolder(holder: MessageViewHolder, position: Int) {
-        holder.bind(position, messageList[position])
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        val layoutInflater = LayoutInflater.from(parent.context)
+
+        return when(viewType) {
+            VIEW_TYPE_INCOMING -> {
+                val view = layoutInflater.inflate(R.layout.in_msg_item, parent, false)
+                IncomingMessageViewHolder(view)
+            }
+            VIEW_TYPE_OUTGOING -> {
+                val view = layoutInflater.inflate(R.layout.out_msg_item, parent, false)
+                OutgoingMessageViewHolder(view)
+            }
+            else -> throw IllegalArgumentException("Invalid view type")
+        }
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when(holder) {
+            is OutgoingMessageViewHolder -> holder.bind(position, messageList[position])
+            is IncomingMessageViewHolder -> holder.bind(position, messageList[position])
+        }
     }
 
     override fun getItemCount(): Int = messageList.size
+
+    override fun getItemViewType(position: Int): Int {
+        return if (messageList[position].isIncoming) VIEW_TYPE_INCOMING else VIEW_TYPE_OUTGOING
+    }
+
+    companion object {
+        private const val VIEW_TYPE_INCOMING = 0
+        private const val VIEW_TYPE_OUTGOING = 1
+    }
 }

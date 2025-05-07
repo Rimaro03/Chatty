@@ -26,7 +26,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layoutManager="LinearLayoutManager"
-        tools:listitem="@layout/message_item"
+        tools:listitem="@layout/out_msg_item"
         android:padding="10dp"
         />
 

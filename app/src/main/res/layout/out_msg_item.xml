@@ -8,13 +8,6 @@
     android:paddingBottom="10dp">
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/incoming_msg_guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.66" />
-
-    <androidx.constraintlayout.widget.Guideline
         android:id="@+id/outgoing_msg_guideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -22,14 +15,22 @@
         app:layout_constraintGuide_percent="0.33"
         />
 
-    <TextView
-        android:id="@+id/message_tv"
+    <LinearLayout
+        android:id="@+id/message_wrapper"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="@+id/outgoing_msg_guideline"
         app:layout_constraintEnd_toEndOf="parent"
-        android:gravity="end"
-        style="@style/MessageStyle" />
+        android:gravity="end">
+
+        <TextView
+            android:id="@+id/out_msg_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/MessageStyle"
+            android:background="@drawable/rounded_corner"/>
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
