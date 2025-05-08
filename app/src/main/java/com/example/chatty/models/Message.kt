@@ -1,4 +1,4 @@
-package com.example.chatty.model
+package com.example.chatty.models
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
@@ -10,6 +10,12 @@ import androidx.room.PrimaryKey
             entity = Contact::class,
             parentColumns = ["id"],
             childColumns = ["contactId"],
+            onDelete = ForeignKey.CASCADE
+        ),
+        ForeignKey(
+            entity = Chat::class,
+            parentColumns = ["id"],
+            childColumns = ["chatId"],
             onDelete = ForeignKey.CASCADE
         )
     ]

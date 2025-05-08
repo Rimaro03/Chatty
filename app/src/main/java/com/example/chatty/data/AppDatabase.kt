@@ -2,8 +2,8 @@ package com.example.chatty.data
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.example.chatty.model.Contact
-import com.example.chatty.model.Message
+import com.example.chatty.models.Contact
+import com.example.chatty.models.Message
 
 @Database(
     entities = [

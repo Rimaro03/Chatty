@@ -8,7 +8,7 @@ import android.content.Intent
 import androidx.core.app.NotificationCompat
 import com.example.chatty.MainActivity
 import com.example.chatty.R
-import com.example.chatty.model.Message
+import com.example.chatty.models.Message
 
 class Notifications(private val context: Context) {
     private val appContext = context.applicationContext

@@ -1,4 +1,4 @@
-package com.example.chatty.model
+package com.example.chatty.models
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

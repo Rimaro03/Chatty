@@ -3,7 +3,7 @@ package com.example.chatty.data
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import com.example.chatty.model.Message
+import com.example.chatty.models.Message
 import kotlinx.coroutines.flow.Flow
 
 @Dao

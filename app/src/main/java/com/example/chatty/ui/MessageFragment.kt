@@ -10,10 +10,8 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatty.MessageAdapter
-import com.example.chatty.ui.MessageViewModel
 import com.example.chatty.R
-import com.example.chatty.model.Message
-import com.google.android.material.textfield.TextInputEditText
+import com.example.chatty.models.Message
 import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.AndroidEntryPoint
 
