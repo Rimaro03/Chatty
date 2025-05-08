@@ -9,7 +9,7 @@ import androidx.room.PrimaryKey
         ForeignKey(
             entity = Contact::class,
             parentColumns = ["id"],
-            childColumns = ["contactId"],
+            childColumns = ["senderId"],
             onDelete = ForeignKey.CASCADE
         ),
         ForeignKey(
@@ -27,10 +27,10 @@ data class Message (
     val mediaUri: String? = null,
     val mediaMimeType: String? = null,
     val timestamp: Long? = null,
-    val contactId: Long
+    val senderId: Long,
+    val chatId: Long
 ) {
-
     // contact with 0L is me
     val isIncoming: Boolean
-        get() = contactId != 0L
+        get() = senderId != 0L
 }

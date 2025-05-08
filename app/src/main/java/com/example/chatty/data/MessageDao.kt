@@ -11,8 +11,8 @@ interface MessageDao {
     @Query("SELECT * FROM Message")
     fun getAll(): List<Message>
 
-    @Query("SELECT * FROM Message WHERE contactId = :contactId")
-    fun getByContactId(contactId: Long): Flow<List<Message>>
+    @Query("SELECT * FROM Message WHERE senderId = :senderId")
+    fun getBySenderId(senderId: Long): Flow<List<Message>>
 
     @Insert
     fun insert(message: Message)
