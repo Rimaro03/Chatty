@@ -20,4 +20,12 @@ class ChatRepository @Inject constructor(
     fun getContacts() = contactDao.getAll()
 
     fun getChatByContactId(contactId: Long) = messageDao.getByContactId(contactId)
+
+    fun sendMessage(message: String, contactId: Long) {
+        /*
+        * Insert message in DB
+        * generate repsonse
+        * insert response in DB
+        * generate notification*/
+    }
 }

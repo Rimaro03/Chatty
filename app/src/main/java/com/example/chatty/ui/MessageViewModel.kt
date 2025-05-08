@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.chatty.BuildConfig
 import com.example.chatty.model.Message
+import com.example.chatty.repository.ChatRepository
 import com.example.chatty.utils.Notifications
 import com.google.ai.client.generativeai.GenerativeModel
 import com.google.ai.client.generativeai.type.content
@@ -16,7 +17,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MessageViewModel @Inject constructor(
-    application: Application
+    application: Application,
+    chatRepository: ChatRepository
 ): ViewModel() {
     private val _messageList = MutableLiveData<List<Message>>(emptyList<Message>())
     val messageList: LiveData<List<Message>> get() = _messageList

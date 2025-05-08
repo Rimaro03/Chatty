@@ -40,7 +40,6 @@ class MessageFragment: Fragment() {
 
         //input field
         val textInput = view.findViewById<TextInputLayout>(R.id.message_input)
-        val editText = TextInputEditText(textInput.context)
 
         val sendButton = view.findViewById<Button>(R.id.send_btn)
 

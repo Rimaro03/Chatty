@@ -18,7 +18,7 @@ object AppModule {
         return Room.databaseBuilder(
             context,
             AppDatabase::class.java,
-            "my_database"
+            "chat_database"
         ).build()
     }
 
