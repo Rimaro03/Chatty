@@ -1,0 +1,22 @@
+package com.example.chatty.data
+
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.Query
+import com.example.chatty.model.Message
+import kotlinx.coroutines.flow.Flow
+
+@Dao
+interface MessageDao {
+    @Query("SELECT * FROM Message")
+    fun getAll(): List<Message>
+
+    @Query("SELECT * FROM Message WHERE contactId = :contactId")
+    fun getByContactId(contactId: Long): Flow<List<Message>>
+
+    @Insert
+    fun insert(message: Message)
+
+    @Query("DELETE FROM Message")
+    fun deleteAll()
+}

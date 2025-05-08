@@ -1,17 +1,18 @@
-package com.example.chatty
+package com.example.chatty.utils
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
-import android.content.Context.NOTIFICATION_SERVICE
 import android.content.Intent
 import androidx.core.app.NotificationCompat
-import com.example.chatty.data.Message
+import com.example.chatty.MainActivity
+import com.example.chatty.R
+import com.example.chatty.model.Message
 
-class NotificationHelper(private val context: Context) {
+class Notifications(private val context: Context) {
     private val appContext = context.applicationContext
-    private val notificationManager = appContext.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+    private val notificationManager = appContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
     companion object {
         private const val CHANNEL_NEW_MESSAGE = "new_message"
