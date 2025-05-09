@@ -23,7 +23,14 @@ class ChatFragment: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_chat, container, false)
+        return inflater.inflate(R.layout.fragment_chat, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // get contact id from HomeFragment
+        messageViewModel.setContactId(arguments?.getLong("contactId") ?: 0L)
 
         // message RecyclerView
         val messageRecyclerView = view.findViewById<RecyclerView>(R.id.message_rv_list)
@@ -37,17 +44,13 @@ class ChatFragment: Fragment() {
 
         //input field
         val textInput = view.findViewById<TextInputLayout>(R.id.message_input)
-
         val sendButton = view.findViewById<Button>(R.id.send_btn)
 
         sendButton.setOnClickListener {
             if(textInput.editText?.text.toString().isEmpty()) return@setOnClickListener
-
             val message = textInput.editText?.text.toString()
             messageViewModel.sendMessage(content = message)
             textInput.editText?.text?.clear()
         }
-
-        return view
     }
 }

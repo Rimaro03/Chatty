@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.os.bundleOf
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatty.R
@@ -17,8 +18,8 @@ class ContactAdapter(private var contactList: List<Contact>): RecyclerView.Adapt
             contactTv.text = contact.name
             contactTv.setOnClickListener {
                 val navController = itemView.findNavController()
-                // TODO: navigate to chat fragment
-                // TODO: pass contactId to chat fragment
+                val bundle = bundleOf("contactId" to contact.id)
+                navController.navigate(R.id.action_homeFragment_to_chatFragment, bundle)
             }
         }
     }

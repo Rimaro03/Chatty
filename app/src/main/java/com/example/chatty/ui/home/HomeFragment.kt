@@ -9,7 +9,9 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatty.R
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class HomeFragment: Fragment() {
     private val homeViewModel: HomeViewModel by viewModels()
 
@@ -27,7 +29,12 @@ class HomeFragment: Fragment() {
         // contact RecyclerView
         val contactRecyclerView = view.findViewById<RecyclerView>(R.id.contact_rv_list)
         contactRecyclerView.layoutManager = LinearLayoutManager(view.context)
-        val adapter = ContactAdapter(homeViewModel.contactList)
+
+        val adapter = ContactAdapter(emptyList())
+        homeViewModel.contactList.observe(viewLifecycleOwner) { contactList ->
+            adapter.submitList(contactList)
+        }
+
         contactRecyclerView.adapter = adapter
     }
 }
