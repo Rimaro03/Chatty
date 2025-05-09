@@ -22,11 +22,11 @@ import androidx.room.PrimaryKey
 )
 data class Message (
     @PrimaryKey(autoGenerate = true)
-    val id: Long,
+    val id: Long = 0L,
     val content: String,
     val mediaUri: String? = null,
     val mediaMimeType: String? = null,
-    val timestamp: Long? = null,
+    val timestamp: String? = null,
     val senderId: Long,
     val chatId: Long
 ) {

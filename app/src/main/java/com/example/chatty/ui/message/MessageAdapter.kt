@@ -1,10 +1,11 @@
-package com.example.chatty
+package com.example.chatty.ui.message
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.chatty.R
 import com.example.chatty.models.Message
 
 class MessageAdapter(private var messageList: List<Message>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -27,7 +28,7 @@ class MessageAdapter(private var messageList: List<Message>) : RecyclerView.Adap
 
     fun submitList(newList: List<Message>) {
         messageList = newList
-        notifyDataSetChanged()
+        notifyItemRangeInserted(0, newList.size)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
