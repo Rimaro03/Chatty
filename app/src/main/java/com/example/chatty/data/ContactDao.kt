@@ -10,10 +10,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ContactDao {
     @Query("SELECT * FROM Contact")
-    fun getAll(): Flow<List<Contact>>
-
-    @Insert
-    fun insert(vararg contact: Contact)
+    fun getAll(): List<Contact>
 
     @Delete
     fun delete(vararg contact: Contact)

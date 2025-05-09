@@ -1,4 +1,4 @@
-package com.example.chatty.ui
+package com.example.chatty.ui.message
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,14 +9,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.chatty.MessageAdapter
 import com.example.chatty.R
 import com.example.chatty.models.Message
 import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MessageFragment: Fragment() {
+class ChatFragment: Fragment() {
     private val messageViewModel: MessageViewModel by viewModels()
 
     override fun onCreateView(
@@ -32,7 +31,7 @@ class MessageFragment: Fragment() {
         val adapter = MessageAdapter(mutableListOf<Message>())
         messageRecyclerView.adapter = adapter
 
-        messageViewModel.messageList.observe(viewLifecycleOwner) { newList ->
+        messageViewModel.chatMessages.observe(viewLifecycleOwner) { newList ->
             adapter.submitList(newList)
         }
 
@@ -45,11 +44,7 @@ class MessageFragment: Fragment() {
             if(textInput.editText?.text.toString().isEmpty()) return@setOnClickListener
 
             val message = textInput.editText?.text.toString()
-            messageViewModel.sendMessage(Message(
-                id = 1L,
-                contactId = 2L,
-                content = message
-            ))
+            messageViewModel.sendMessage(content = message)
             textInput.editText?.text?.clear()
         }
 
