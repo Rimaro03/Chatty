@@ -1,6 +1,5 @@
 package com.example.chatty.ui.home
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.example.chatty.models.Contact
@@ -12,5 +11,5 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     chatRepository: ChatRepository
 ): ViewModel() {
-    var contactList: LiveData<List<Contact>> = chatRepository.getContacts
+    var contactList: LiveData<List<Contact>> = chatRepository.getContacts()
 }
