@@ -34,21 +34,23 @@ class Notifications(private val context: Context) {
     fun showNotification(
         message: Message
     ) {
+        // Notification action: open chat (message fragment) of the provided contact (senderId)
+        val pendingIntent = PendingIntent.getActivity(
+            appContext,
+            1,
+            Intent(Intent.ACTION_VIEW, "chatty://chat/${message.senderId}".toUri()).apply {
+                setPackage(context.packageName)
+            },
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
+
         var builder = NotificationCompat.Builder(appContext, CHANNEL_NEW_MESSAGE)
             .setSmallIcon(R.drawable.ic_message)
             .setContentTitle("New Message")
             .setContentText(message.content)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setContentIntent(
-                PendingIntent.getActivity(
-                    appContext,
-                    1,
-                    Intent(Intent.ACTION_VIEW, "chatty://chat/${message.senderId}".toUri()).apply {
-                        setPackage(context.packageName)
-                    },
-                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
-                )
-            )
+            .setContentIntent(pendingIntent) // notification action
+            .setAutoCancel(true) // destroy notification when clicked
         notificationManager.notify(1234, builder.build())
     }
 }

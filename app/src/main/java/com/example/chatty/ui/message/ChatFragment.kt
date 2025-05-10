@@ -28,6 +28,7 @@ class ChatFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // Letting viewmodel know fragment visible
         messageViewModel.onFragmentVisible()
 
         // get contact id from HomeFragment
@@ -59,6 +60,7 @@ class ChatFragment: Fragment() {
 
     override fun onPause() {
         super.onPause()
+        // Letting viewmodel know fragment is hidden
         messageViewModel.onFragmentHidden()
     }
 }
