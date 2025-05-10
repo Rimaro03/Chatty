@@ -4,7 +4,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.core.os.bundleOf
+import androidx.core.net.toUri
+import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatty.R
@@ -18,8 +19,10 @@ class ContactAdapter(private var contactList: List<Contact>): RecyclerView.Adapt
             contactTv.text = contact.name
             contactTv.setOnClickListener {
                 val navController = itemView.findNavController()
-                val bundle = bundleOf("contactId" to contact.id)
-                navController.navigate(R.id.action_homeFragment_to_chatFragment, bundle)
+                val deepLinkReq = NavDeepLinkRequest.Builder
+                    .fromUri("chatty://chat/${contact.id}".toUri())
+                    .build()
+                navController.navigate(deepLinkReq)
             }
         }
     }

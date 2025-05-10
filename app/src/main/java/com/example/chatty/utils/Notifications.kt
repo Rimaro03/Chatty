@@ -6,9 +6,9 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
-import com.example.chatty.MainActivity
 import com.example.chatty.R
 import com.example.chatty.models.Message
+import androidx.core.net.toUri
 
 class Notifications(private val context: Context) {
     private val appContext = context.applicationContext
@@ -43,10 +43,10 @@ class Notifications(private val context: Context) {
                 PendingIntent.getActivity(
                     appContext,
                     1,
-                    Intent(appContext, MainActivity::class.java).apply {
-                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    Intent(Intent.ACTION_VIEW, "chatty://chat/${message.senderId}".toUri()).apply {
+                        setPackage(context.packageName)
                     },
-                    PendingIntent.FLAG_IMMUTABLE
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
                 )
             )
         notificationManager.notify(1234, builder.build())

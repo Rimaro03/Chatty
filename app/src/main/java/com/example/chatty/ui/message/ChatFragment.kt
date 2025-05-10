@@ -1,6 +1,7 @@
 package com.example.chatty.ui.message
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,7 +30,8 @@ class ChatFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // get contact id from HomeFragment
-        messageViewModel.setContactId(arguments?.getLong("contactId") ?: 0L)
+        Log.d("ChatFragment", "onViewCreated: ${arguments?.getLong("contactId")}")
+        messageViewModel.setContactId(arguments?.getString("contactId")?.toLong() ?: 0L)
 
         // message RecyclerView
         val messageRecyclerView = view.findViewById<RecyclerView>(R.id.message_rv_list)
