@@ -6,7 +6,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.Navigation.findNavController
 import com.example.chatty.BuildConfig
+import com.example.chatty.R
 import com.example.chatty.models.Chat
 import com.example.chatty.models.Message
 import com.example.chatty.repository.ChatRepository
@@ -27,6 +29,15 @@ class MessageViewModel @Inject constructor(
     // notifications set-up
     private var notifications: Notifications =
         Notifications(context = application.applicationContext)
+    private var _isVisible: Boolean = false
+
+    fun onFragmentVisible() {
+        _isVisible = true
+    }
+
+    fun onFragmentHidden() {
+        _isVisible = false
+    }
 
     init {
         notifications.setupChannel()
@@ -86,7 +97,9 @@ class MessageViewModel @Inject constructor(
                 )
                 send(message)
 
-                notifications.showNotification(message)
+                if(!_isVisible) {
+                    notifications.showNotification(message)
+                }
             }
         }
     }

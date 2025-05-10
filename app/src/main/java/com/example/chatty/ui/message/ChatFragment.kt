@@ -28,6 +28,7 @@ class ChatFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        messageViewModel.onFragmentVisible()
 
         // get contact id from HomeFragment
         Log.d("ChatFragment", "onViewCreated: ${arguments?.getLong("contactId")}")
@@ -54,5 +55,10 @@ class ChatFragment: Fragment() {
             messageViewModel.sendMessage(content = message)
             textInput.editText?.text?.clear()
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        messageViewModel.onFragmentHidden()
     }
 }
