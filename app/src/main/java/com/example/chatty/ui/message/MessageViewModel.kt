@@ -69,6 +69,7 @@ class MessageViewModel @Inject constructor(
             )
         )
 
+        // more info for generating photos and other content at https://ai.google.dev/api/generate-content#text
         val generativeModel = GenerativeModel(
             modelName = "gemini-2.0-flash",
             apiKey = BuildConfig.API_KEY,
