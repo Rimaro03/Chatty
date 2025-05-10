@@ -14,14 +14,16 @@ class ChatRepository @Inject constructor(
     private val myChatId: Long = 0L
 
     // contact
-    fun getContacts() = contactDao.getAll()
+    val getContacts = contactDao.getAll()
 
     // chat
     fun getChat(chatId: Long) = chatDao.getById(chatId)
 
     // messages
     fun getMessages(chatId: Long) = messageDao.getAllByChatId(chatId)
-    fun sendMessage(message: Message) = messageDao.insert(message)
+    suspend fun sendMessage(message: Message) {
+        messageDao.insert(message)
+    }
 
     fun sendMessage(message: String, contactId: Long) {
         /*

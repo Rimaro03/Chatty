@@ -41,7 +41,7 @@ class MessageViewModel @Inject constructor(
         chatRepository.getChat(contactId)
     }
     // watch for changes in contactId to retrieve the chat messages
-    val chatMessages: LiveData<List<Message>> = _contactId.switchMap {
+    val chatMessages: LiveData<List<Message>> = _chat.switchMap {
         // chat MAY not exist in the DB
         chatRepository.getMessages(_chat.value!!.id)
     }
@@ -51,7 +51,7 @@ class MessageViewModel @Inject constructor(
     }
 
     fun sendMessage(content: String) {
-        chatRepository.sendMessage(
+        send(
             Message(
                 content = content,
                 senderId = 0L, // I am the sender
@@ -84,9 +84,15 @@ class MessageViewModel @Inject constructor(
                     timestamp = DateTimeFormatter.ISO_INSTANT.format(Instant.now()).toString(),
                     chatId = _chat.value!!.id
                 )
-                chatRepository.sendMessage(message)
+                send(message)
                 notifications.showNotification(message)
             }
+        }
+    }
+
+    private fun send(message: Message) {
+        viewModelScope.launch {
+            chatRepository.sendMessage(message)
         }
     }
 

@@ -7,6 +7,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Provider
 import javax.inject.Singleton
 
 @Module
@@ -14,12 +15,17 @@ import javax.inject.Singleton
 object AppModule {
     @Provides
     @Singleton
-    fun provideDatabase(@ApplicationContext context: Context): AppDatabase {
+    fun provideDatabase(
+        @ApplicationContext context: Context,
+        callback: DatabaseCallback
+    ): AppDatabase {
         return Room.databaseBuilder(
             context,
             AppDatabase::class.java,
             "chat_database"
-        ).build()
+        )
+            .addCallback(callback)
+            .build()
     }
 
     @Provides
@@ -30,4 +36,12 @@ object AppModule {
 
     @Provides
     fun provideChatDao(db: AppDatabase): ChatDao = db.chatDao()
+
+    @Provides
+    @Singleton
+    fun provideDatabaseCallback(
+        @ApplicationContext context: Context,
+        contactDaoProvider: Provider<ContactDao>,
+        chatDaoProvider: Provider<ChatDao>
+    ): DatabaseCallback = DatabaseCallback(contactDaoProvider, chatDaoProvider)
 }

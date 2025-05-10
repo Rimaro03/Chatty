@@ -28,7 +28,7 @@ class MessageAdapter(private var messageList: List<Message>) : RecyclerView.Adap
 
     fun submitList(newList: List<Message>) {
         messageList = newList
-        notifyItemRangeInserted(0, newList.size)
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {

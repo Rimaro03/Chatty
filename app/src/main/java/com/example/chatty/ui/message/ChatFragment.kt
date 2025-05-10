@@ -1,6 +1,7 @@
 package com.example.chatty.ui.message
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -35,10 +36,11 @@ class ChatFragment: Fragment() {
         // message RecyclerView
         val messageRecyclerView = view.findViewById<RecyclerView>(R.id.message_rv_list)
         messageRecyclerView.layoutManager = LinearLayoutManager(view.context).apply { stackFromEnd = true }
-        val adapter = MessageAdapter(mutableListOf<Message>())
+        val adapter = MessageAdapter(mutableListOf())
         messageRecyclerView.adapter = adapter
 
         messageViewModel.chatMessages.observe(viewLifecycleOwner) { newList ->
+            messageRecyclerView.scrollToPosition(newList.size - 1)
             adapter.submitList(newList)
         }
 

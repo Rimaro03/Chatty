@@ -83,5 +83,7 @@ dependencies {
     ksp(libs.hilt.android.compiler)
 
     // LiveData
-    implementation(libs.androidx.lifecycle.livedata.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.livedata.ktx.v262)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
 }
