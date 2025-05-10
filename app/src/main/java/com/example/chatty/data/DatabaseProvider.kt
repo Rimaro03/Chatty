@@ -40,7 +40,6 @@ object AppModule {
     @Provides
     @Singleton
     fun provideDatabaseCallback(
-        @ApplicationContext context: Context,
         contactDaoProvider: Provider<ContactDao>,
         chatDaoProvider: Provider<ChatDao>
     ): DatabaseCallback = DatabaseCallback(contactDaoProvider, chatDaoProvider)

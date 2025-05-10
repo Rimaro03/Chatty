@@ -9,9 +9,7 @@ import com.example.chatty.models.Message
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 import javax.inject.Provider
-import kotlin.reflect.KParameter
 
 @Database(
     entities = [
