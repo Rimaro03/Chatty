@@ -4,4 +4,12 @@
         <item name="android:textColor">@color/md_theme_onBackground</item>
         <item name="android:padding">5dp</item>
     </style>
+
+    <style name="ContactNameStyle" parent="Widget.MaterialComponents.TextView">
+        <item name="android:textColor">@color/md_theme_onBackground</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+    <style name="ContactImageStyle">
+        <item name="cornerSize">50%</item>
+    </style>
 </resources>

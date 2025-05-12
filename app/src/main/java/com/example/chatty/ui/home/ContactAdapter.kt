@@ -3,6 +3,7 @@ package com.example.chatty.ui.home
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewParent
 import android.widget.TextView
 import androidx.core.net.toUri
 import androidx.navigation.NavDeepLinkRequest
@@ -13,11 +14,12 @@ import com.example.chatty.models.Contact
 
 class ContactAdapter(private var contactList: List<Contact>): RecyclerView.Adapter<ContactAdapter.ContactViewHolder>() {
     class ContactViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
-        private val contactTv: TextView = itemView.findViewById(R.id.contact_tv)
+        private val contactTv: TextView = itemView.findViewById(R.id.contact_name_tv)
+        private val parent: ViewParent = contactTv.parent
 
         fun bind(contact: Contact) {
             contactTv.text = contact.name
-            contactTv.setOnClickListener {
+            itemView.setOnClickListener {
                 val navController = itemView.findNavController()
                 val deepLinkReq = NavDeepLinkRequest.Builder
                     .fromUri("chatty://chat/${contact.id}".toUri())
