@@ -38,13 +38,13 @@ class Notifications(private val context: Context) {
         val pendingIntent = PendingIntent.getActivity(
             appContext,
             1,
-            Intent(Intent.ACTION_VIEW, "chatty://chat/${message.senderId}".toUri()).apply {
+            Intent(Intent.ACTION_VIEW, "chatty://chat/${message.chatId}".toUri()).apply {
                 setPackage(context.packageName)
             },
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
 
-        var builder = NotificationCompat.Builder(appContext, CHANNEL_NEW_MESSAGE)
+        val builder = NotificationCompat.Builder(appContext, CHANNEL_NEW_MESSAGE)
             .setSmallIcon(R.drawable.ic_message)
             .setContentTitle("New Message")
             .setContentText(message.content)

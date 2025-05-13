@@ -14,9 +14,6 @@ interface ChatDao {
     @Query("SELECT * FROM Chat WHERE id = :chatId")
     fun getById(chatId: Long): LiveData<Chat>
 
-    @Query("SELECT * FROM Chat WHERE contactId = :contactId")
-    fun getByContactId(contactId: Long): LiveData<Chat>
-
     @Insert
     fun insert(vararg chat: Chat)
 }

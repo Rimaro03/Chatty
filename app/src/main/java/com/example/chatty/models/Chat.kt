@@ -6,6 +6,7 @@ import androidx.room.PrimaryKey
 @Entity
 data class Chat(
     @PrimaryKey(autoGenerate = true)
-    val id: Long,
-    val contactId: Long,
+    val id: Long = 0L,
+    val name: String,
+    val icon: String
 )

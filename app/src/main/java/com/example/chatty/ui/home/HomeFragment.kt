@@ -10,7 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatty.R
-import com.example.chatty.models.Contact
+import com.example.chatty.models.Chat
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -31,12 +31,12 @@ class HomeFragment: Fragment() {
         // contact RecyclerView
         val contactRecyclerView = view.findViewById<RecyclerView>(R.id.contact_rv_list)
         contactRecyclerView.layoutManager = LinearLayoutManager(view.context)
-        val adapter = ContactAdapter(mutableListOf<Contact>())
+        val adapter = ContactAdapter(mutableListOf<Chat>())
         contactRecyclerView.adapter = adapter
-        homeViewModel.contactList.observe(viewLifecycleOwner) { contactList ->
-            Log.d("HomeFragment", "contactList: $contactList")
+        homeViewModel.chatList.observe(viewLifecycleOwner) { chatList ->
+            Log.d("HomeFragment", "chatList: $chatList")
             // Disabling chat with myself (0L is my ID)
-            adapter.submitList(contactList.dropWhile { contact -> contact.id == 0L })
+            adapter.submitList(chatList.dropWhile { contact -> contact.id == 0L })
         }
     }
 }
