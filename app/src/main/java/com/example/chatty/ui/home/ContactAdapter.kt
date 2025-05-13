@@ -16,6 +16,7 @@ import com.google.android.material.imageview.ShapeableImageView
 class ContactAdapter(private var chatList: List<Chat>): RecyclerView.Adapter<ContactAdapter.ContactViewHolder>() {
     class ContactViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         private val contactTv: TextView = itemView.findViewById(R.id.contact_name_tv)
+        private val contactDescriptionTv: TextView = itemView.findViewById(R.id.contact_description_tv)
         private val contactIcon: ShapeableImageView = itemView.findViewById(R.id.contact_img)
 
         fun bind(chat: Chat) {
@@ -29,6 +30,8 @@ class ContactAdapter(private var chatList: List<Chat>): RecyclerView.Adapter<Con
                     .build()
                 navController.navigate(deepLinkReq)
             }
+            contactDescriptionTv.text = itemView.context.getString(R.string.contact_description, chat.name)
+            contactIcon.setImageResource(chat.icon)
         }
     }
 

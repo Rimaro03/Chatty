@@ -3,6 +3,7 @@ package com.example.chatty.data
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.example.chatty.R
 import com.example.chatty.models.Chat
 import com.example.chatty.models.Message
 import kotlinx.coroutines.CoroutineScope
@@ -30,7 +31,11 @@ class DatabaseCallback(
         CoroutineScope(Dispatchers.IO).launch {
             chatDaoProvider.get().insert(Chat(
                 name = "Boneca Ambalabu",
-                icon = ""
+                icon = R.drawable.boneca
+            ))
+            chatDaoProvider.get().insert(Chat(
+                name = "Bombardino Crocodilo",
+                icon = R.drawable.bombardino
             ))
         }
     }

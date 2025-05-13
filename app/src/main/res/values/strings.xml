@@ -4,4 +4,8 @@
     <!-- Input layout -->
     <string name="edit_text_hint">Type here</string>
     <string name="send_button_text">Send</string>
+
+    <!-- Contact strings -->
+    <string name="contact_name_placeholder">Boneca Ambalabu</string>
+    <string name="contact_description">Hi there, I\'m %1$s</string>
 </resources>

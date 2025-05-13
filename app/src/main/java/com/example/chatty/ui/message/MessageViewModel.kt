@@ -77,7 +77,7 @@ class MessageViewModel @Inject constructor(
             modelName = "gemini-2.0-flash",
             apiKey = BuildConfig.API_KEY,
             systemInstruction = content {
-                text("Please respond to this conversation like you were and old friend of mine.")
+                text("Please respond to this conversation like the meme ${_chat.value!!.name}.")
             }
         )
 
