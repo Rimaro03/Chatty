@@ -44,7 +44,7 @@ class Notifications(private val context: Context) {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
 
-        var builder = NotificationCompat.Builder(appContext, CHANNEL_NEW_MESSAGE)
+        val builder = NotificationCompat.Builder(appContext, CHANNEL_NEW_MESSAGE)
             .setSmallIcon(R.drawable.ic_message)
             .setContentTitle("New Message")
             .setContentText(message.content)
