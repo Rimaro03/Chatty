@@ -29,9 +29,6 @@ object AppModule {
     }
 
     @Provides
-    fun provideContactDao(db: AppDatabase): ContactDao = db.contactDao()
-
-    @Provides
     fun provideMessageDao(db: AppDatabase): MessageDao = db.messageDao()
 
     @Provides
@@ -40,7 +37,6 @@ object AppModule {
     @Provides
     @Singleton
     fun provideDatabaseCallback(
-        contactDaoProvider: Provider<ContactDao>,
         chatDaoProvider: Provider<ChatDao>
-    ): DatabaseCallback = DatabaseCallback(contactDaoProvider, chatDaoProvider)
+    ): DatabaseCallback = DatabaseCallback(chatDaoProvider)
 }
