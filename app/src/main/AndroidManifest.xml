@@ -30,6 +30,8 @@
                 <data android:scheme="chatty" android:host="chat" />
             </intent-filter>
         </activity>
+        <receiver android:name=".utils.ReplyReceiver" />
+        <receiver android:name=".utils.ReadReceiver" />
     </application>
 
 </manifest>

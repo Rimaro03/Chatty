@@ -21,6 +21,10 @@ import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
+import android.util.Log
+import androidx.lifecycle.asFlow
+import kotlinx.coroutines.flow.first
+import java.util.jar.Attributes
 
 @HiltViewModel
 class MessageViewModel @Inject constructor(
@@ -103,8 +107,7 @@ class MessageViewModel @Inject constructor(
                 send(message)
 
                 if (!_isVisible)
-                    notifications.showNotification(message)
-
+                    notifications.showNotification(message, _chatId.name)
             }
         }
     }

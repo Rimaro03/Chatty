@@ -18,7 +18,6 @@ class ChatRepository @Inject constructor(
     // messages
     fun getMessages(chatId: Long) = messageDao.getAllByChatId(chatId)
 
-
     suspend fun sendMessage(message: Message) {
         messageDao.insert(message)
     }
