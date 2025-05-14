@@ -55,7 +55,7 @@ class MessageViewModel @Inject constructor(
     }
     // watch for changes in contactId to retrieve the chat messages
     val chatMessages: LiveData<List<Message>> = _chat.switchMap {
-        chatRepository.getMessages(_chat.value!!.id)
+            chatRepository.getMessages(_chat.value!!.id)
     }
 
     fun setContactId(contactId: Long) {
