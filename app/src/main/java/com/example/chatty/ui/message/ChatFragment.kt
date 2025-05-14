@@ -6,13 +6,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatty.R
+import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.AndroidEntryPoint
+
 
 @AndroidEntryPoint
 class ChatFragment: Fragment() {
@@ -28,11 +36,19 @@ class ChatFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // Letting viewmodel know fragment visible
+
+        // Toolbar
+        (requireActivity() as AppCompatActivity).setSupportActionBar(view.findViewById(R.id.chat_toolbar))
+        // Bind navcontroller to toolbar for back button
+        val navController = findNavController()
+        val appBarConfiguration = AppBarConfiguration(navController.graph)
+        view.findViewById<Toolbar>(R.id.chat_toolbar)
+            .setupWithNavController(navController = navController, configuration = appBarConfiguration)
+
+        // Letting the viewmodel know this fragment visible
         messageViewModel.onFragmentVisible()
 
         // get contact id from HomeFragment
-        Log.d("ChatFragment", "onViewCreated: ${arguments?.getLong("contactId")}")
         messageViewModel.setContactId(arguments?.getString("contactId")?.toLong() ?: 0L)
 
         // message RecyclerView
@@ -56,6 +72,10 @@ class ChatFragment: Fragment() {
             messageViewModel.sendMessage(content = message)
             textInput.editText?.text?.clear()
         }
+
+        // Load icon and name in appbar
+        val contactIcon: ShapeableImageView = view.findViewById(R.id.toolbar_contact_img)
+        val contactName: TextView = view.findViewById(R.id.toolbar_contact_name_tv)
     }
 
     override fun onPause() {
