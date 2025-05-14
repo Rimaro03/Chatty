@@ -15,5 +15,5 @@ interface ChatDao {
     fun getById(chatId: Long): LiveData<Chat>
 
     @Insert
-    fun insert(vararg chat: Chat)
+    suspend fun insert(vararg chat: Chat)
 }

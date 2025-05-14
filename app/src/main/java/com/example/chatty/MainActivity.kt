@@ -3,6 +3,9 @@ import android.Manifest
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
+import android.widget.PopupMenu
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -15,16 +18,16 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
-        // Toolbar
-        setSupportActionBar(findViewById(R.id.toolbar))
 
         // Check for notifications permission
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PermissionChecker.PERMISSION_GRANTED)
                 requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), REQUEST_CODE)
         }
+        // TODO: move menu handling in fragment, add click listener to menu entry
     }
 
+    // Handle permission request result
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray)
     {
         val p = grantResults[0] == PermissionChecker.PERMISSION_GRANTED
@@ -35,6 +38,8 @@ class MainActivity : AppCompatActivity() {
         }
         Log.i(TAG, "Notification runtime permission granted: $p")
     }
+
+
 
     companion object
     {
