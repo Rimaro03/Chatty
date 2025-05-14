@@ -37,6 +37,7 @@ class HomeFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         // Toolbar
         (requireActivity() as AppCompatActivity).setSupportActionBar(view.findViewById(R.id.home_toolbar))
         val menuButton = view.findViewById<ImageButton>(R.id.toolbar_more_button)
