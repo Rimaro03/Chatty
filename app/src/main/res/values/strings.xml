@@ -4,4 +4,5 @@
     <!-- Input layout -->
     <string name="edit_text_hint">Type here</string>
     <string name="send_button_text">Send</string>
+    <string name="reply_label">Reply</string>
 </resources>

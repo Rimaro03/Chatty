@@ -12,6 +12,9 @@ interface ContactDao {
     @Query("SELECT * FROM Contact")
     fun getAll(): LiveData<List<Contact>>
 
+    @Query("SELECT name FROM Contact WHERE id = :contactId")
+    fun getContactNameById(contactId: Long): LiveData<String>
+
     @Insert
     fun insert(vararg contact: Contact)
 

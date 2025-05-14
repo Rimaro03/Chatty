@@ -8,6 +8,7 @@ import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import com.example.chatty.BuildConfig
 import com.example.chatty.models.Chat
+import com.example.chatty.models.Contact
 import com.example.chatty.models.Message
 import com.example.chatty.repository.ChatRepository
 import com.example.chatty.utils.Notifications
@@ -18,6 +19,10 @@ import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
+import android.util.Log
+import androidx.lifecycle.asFlow
+import kotlinx.coroutines.flow.first
+import java.util.jar.Attributes
 
 @HiltViewModel
 class MessageViewModel @Inject constructor(
@@ -96,12 +101,19 @@ class MessageViewModel @Inject constructor(
                 )
                 send(message)
 
-                if(!_isVisible) {
-                    notifications.showNotification(message)
+                val name = chatRepository.getContactNameById(_contactId.value!!).asFlow().first()
+                Log.d("MessageViewModel", "Contact name: $name")
+
+
+                if (!_isVisible) {
+                    notifications.showNotification(message, name)
                 }
             }
         }
     }
+
+    // receive the intent from the notification
+
 
     private fun send(message: Message) {
         viewModelScope.launch {
