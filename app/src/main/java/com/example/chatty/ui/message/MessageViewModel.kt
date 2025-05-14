@@ -107,7 +107,7 @@ class MessageViewModel @Inject constructor(
                 send(message)
 
                 if (!_isVisible)
-                    notifications.showNotification(message, _chatId.name)
+                    notifications.showNotification(message, _chat.value!!.name)
             }
         }
     }
