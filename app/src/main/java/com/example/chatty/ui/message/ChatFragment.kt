@@ -44,9 +44,6 @@ class ChatFragment: Fragment() {
         view.findViewById<Toolbar>(R.id.chat_toolbar)
             .setupWithNavController(navController = navController, configuration = appBarConfiguration)
 
-        // Letting the viewmodel know this fragment visible
-        messageViewModel.onFragmentVisible()
-
         // get contact id from HomeFragment
         messageViewModel.setChatId(arguments?.getString("contactId")?.toLong() ?: 0L)
 
@@ -85,5 +82,11 @@ class ChatFragment: Fragment() {
         super.onPause()
         // Letting viewmodel know fragment is hidden
         messageViewModel.onFragmentHidden()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Letting viewmodel know fragment is hidden
+        messageViewModel.onFragmentVisible()
     }
 }

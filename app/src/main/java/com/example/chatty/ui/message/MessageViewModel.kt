@@ -87,9 +87,9 @@ class MessageViewModel @Inject constructor(
             val messageList = chatRepository.getMessages(chat.value!!.id).asFlow().first()
             val chatContents = messageList.map { Content.Builder().text(it.content).build() }.toList()
 
-            val chat = generativeModel.startChat(chatContents)
+            val chatBot = generativeModel.startChat(chatContents)
             val response = try {
-                chat.sendMessage(content).text ?: "..."
+                chatBot.sendMessage(content).text ?: "..."
             } catch (e: Exception) {
                 e.printStackTrace()
                 e.message
@@ -102,10 +102,11 @@ class MessageViewModel @Inject constructor(
                     chatId = _chatId.value!!,
                     isIncoming = true
                 )
+                Thread.sleep(1000)
                 send(message)
 
                 if (!_isVisible)
-                    notifications.showNotification(message, _chat.value!!)
+                    notifications.showNotification(message, chat.value!!)
             }
         }
     }
