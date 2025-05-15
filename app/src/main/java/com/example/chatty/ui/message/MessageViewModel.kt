@@ -49,18 +49,19 @@ class MessageViewModel @Inject constructor(
 
     // changed from UI by clicking on contact
     private val _chatId = MutableLiveData(0L)
-    // watch for changes in contactId to retrieve the chat
-    private val _chat: LiveData<Chat> = _chatId.switchMap { contactId ->
-        chatRepository.getChat(contactId)
+
+    // watch for changes in chatId to retrieve the chat
+    val chat: LiveData<Chat> = _chatId.switchMap { newChatId ->
+        chatRepository.getChat(newChatId)
     }
 
-    // watch for changes in contactId to retrieve the chat messages
-    val chatMessages: LiveData<List<Message>> = _chat.switchMap {
-            chatRepository.getMessages(_chat.value!!.id)
+    // watch for changes in chatId to retrieve the chat messages
+    val chatMessages: LiveData<List<Message>> = _chatId.switchMap { newChatId ->
+            chatRepository.getMessages(newChatId)
     }
 
-    fun setContactId(contactId: Long) {
-        _chatId.value = contactId
+    fun setChatId(chatId: Long) {
+        _chatId.value = chatId
     }
 
     fun sendMessage(content: String) {
@@ -68,7 +69,7 @@ class MessageViewModel @Inject constructor(
             Message(
                 content = content,
                 timestamp = DateTimeFormatter.ISO_INSTANT.format(Instant.now()).toString(),
-                chatId = _chat.value!!.id,
+                chatId = chat.value!!.id,
                 isIncoming = false
             )
         )
@@ -78,12 +79,12 @@ class MessageViewModel @Inject constructor(
             modelName = "gemini-2.0-flash",
             apiKey = BuildConfig.API_KEY,
             systemInstruction = content {
-                text("Please respond to this conversation like the meme ${_chat.value!!.name}.")
+                text("Please respond to this conversation like the meme ${chat.value!!.name}.")
             }
         )
 
         viewModelScope.launch {
-            val messageList = chatRepository.getMessages(_chat.value!!.id).asFlow().first()
+            val messageList = chatRepository.getMessages(chat.value!!.id).asFlow().first()
             val chatContents = messageList.map { Content.Builder().text(it.content).build() }.toList()
 
             val chat = generativeModel.startChat(chatContents)
@@ -98,7 +99,7 @@ class MessageViewModel @Inject constructor(
                 val message = Message(
                     content = response,
                     timestamp = DateTimeFormatter.ISO_INSTANT.format(Instant.now()).toString(),
-                    chatId = _chat.value!!.id,
+                    chatId = _chatId.value!!,
                     isIncoming = true
                 )
                 send(message)

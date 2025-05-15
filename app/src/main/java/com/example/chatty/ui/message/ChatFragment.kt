@@ -1,7 +1,6 @@
 package com.example.chatty.ui.message
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -49,7 +48,7 @@ class ChatFragment: Fragment() {
         messageViewModel.onFragmentVisible()
 
         // get contact id from HomeFragment
-        messageViewModel.setContactId(arguments?.getString("contactId")?.toLong() ?: 0L)
+        messageViewModel.setChatId(arguments?.getString("contactId")?.toLong() ?: 0L)
 
         // message RecyclerView
         val messageRecyclerView = view.findViewById<RecyclerView>(R.id.message_rv_list)
@@ -76,6 +75,10 @@ class ChatFragment: Fragment() {
         // Load icon and name in appbar
         val contactIcon: ShapeableImageView = view.findViewById(R.id.toolbar_contact_img)
         val contactName: TextView = view.findViewById(R.id.toolbar_contact_name_tv)
+        messageViewModel.chat.observe(viewLifecycleOwner) { chat ->
+            contactIcon.setImageResource(chat.icon)
+            contactName.text = chat.name
+        }
     }
 
     override fun onPause() {
