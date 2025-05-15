@@ -9,8 +9,9 @@
     <string name="contact_name_placeholder">Boneca Ambalabu</string>
     <string name="contact_description">Hi there, I\'m %1$s</string>
     <string name="contact_call_icon">Call</string>
-    
-    <!-- Home strings -->
+
+  <!-- Home strings -->
     <string name="home_toolbar_menu">Options</string>
     <string name="home_menu_delete">Delete history</string>
+    <string name="reply_label">Reply</string>
 </resources>
