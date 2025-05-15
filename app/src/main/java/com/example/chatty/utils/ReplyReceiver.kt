@@ -12,6 +12,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
 import dagger.hilt.android.AndroidEntryPoint
 import com.example.chatty.R
+import com.example.chatty.ui.message.MessageViewModel
+import javax.inject.Inject
 
 
 @AndroidEntryPoint

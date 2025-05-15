@@ -27,6 +27,8 @@ class Notifications(private val context: Context) {
 
     companion object {
         private const val CHANNEL_NEW_MESSAGE = "new_message"
+        private const val GROUP_NOTIFICATION = "group_notification"
+        val lastTwoMessages = mutableListOf<Pair<String, String>>("contact_name" to "message_content", "contact_name" to "message_content")
     }
 
     fun setupChannel() {
@@ -46,6 +48,16 @@ class Notifications(private val context: Context) {
         message: Message,
         chat: Chat
     ) {
+        if (lastTwoMessages[0].first == chat.name) {
+            lastTwoMessages[0] = chat.name to message.content
+        } else if (lastTwoMessages[1].first == chat.name) {
+            lastTwoMessages[1] = lastTwoMessages[0]
+            lastTwoMessages[0] = chat.name to message.content
+        } else {
+            lastTwoMessages[1] = lastTwoMessages[0]
+            lastTwoMessages[0] = chat.name to message.content
+        }
+
         // Notification action: open chat (message fragment) of the provided contact (senderId)
         val pendingIntent = PendingIntent.getActivity(
             appContext,
@@ -93,8 +105,28 @@ class Notifications(private val context: Context) {
             ).addRemoteInput(remoteInput).build())  // add the reply action
             .addAction(R.drawable.boneca, "Mark as Read", markAsReadIntent) // mark the message as read
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setGroup(GROUP_NOTIFICATION)
 
         // i change the notification id based on the chat that sent the notification
         notificationManager.notify(message.chatId.toInt(), builder.build())
+
+        // create a summary notification
+        if (lastTwoMessages.size > 1) {
+            createSummeryNotification()
+        }
+    }
+
+    private fun createSummeryNotification() {
+        val summaryBuilder = NotificationCompat.Builder(appContext, CHANNEL_NEW_MESSAGE)
+            .setSmallIcon(R.drawable.ic_message)
+            .setContentTitle("New messages")
+            .setStyle(NotificationCompat.InboxStyle()
+                .addLine("${lastTwoMessages[0].first}: ${lastTwoMessages[0].second}")
+                .addLine("${lastTwoMessages[1].first}: ${lastTwoMessages[1].second}")
+                .setSummaryText("+${lastTwoMessages.size - 2} more"))
+            .setGroup(GROUP_NOTIFICATION)
+            .setGroupSummary(true)
+
+        notificationManager.notify(0, summaryBuilder.build())
     }
 }
