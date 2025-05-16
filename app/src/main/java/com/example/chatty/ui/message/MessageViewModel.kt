@@ -1,6 +1,8 @@
 package com.example.chatty.ui.message
 
 import android.app.Application
+import android.content.Context
+import android.content.Intent
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,6 +10,7 @@ import androidx.lifecycle.asFlow
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import com.example.chatty.BuildConfig
+import com.example.chatty.com.example.chatty.utils.FakeCallService
 import com.example.chatty.models.Chat
 import com.example.chatty.models.Message
 import com.example.chatty.repository.ChatRepository
@@ -115,6 +118,11 @@ class MessageViewModel @Inject constructor(
         viewModelScope.launch {
             chatRepository.sendMessage(message)
         }
+    }
+
+    fun startFakeCall(context: Context) {
+        val intent = Intent(context, FakeCallService::class.java)
+        context.startForegroundService(intent)
     }
 
 }

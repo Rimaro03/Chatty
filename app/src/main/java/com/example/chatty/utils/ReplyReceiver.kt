@@ -15,7 +15,6 @@ import com.example.chatty.R
 import com.example.chatty.ui.message.MessageViewModel
 import javax.inject.Inject
 
-
 @AndroidEntryPoint
 class ReplyReceiver : BroadcastReceiver() {
 

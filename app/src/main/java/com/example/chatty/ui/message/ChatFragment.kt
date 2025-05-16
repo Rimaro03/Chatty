@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -75,6 +76,11 @@ class ChatFragment: Fragment() {
         messageViewModel.chat.observe(viewLifecycleOwner) { chat ->
             contactIcon.setImageResource(chat.icon)
             contactName.text = chat.name
+        }
+
+        val callButton = view.findViewById< ImageButton>(R.id.toolbar_more_button)
+        callButton.setOnClickListener {
+            messageViewModel.startFakeCall(view.context)
         }
     }
 
