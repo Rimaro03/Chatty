@@ -21,14 +21,20 @@ class FakeCallService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
+        // take the chat from the intent
+        val chatId = intent?.getLongExtra("chatId", 0L)
+        val chatName = intent?.getStringExtra("chatName") ?: "Caller Name"
+        val chatIcon = intent?.getIntExtra("chatIcon", R.drawable.boneca)
+
         val chat = Chat(
-            id = 1L,
-            name = "Caller Name",
-            icon = R.drawable.boneca,
+            id = chatId!!,
+            name = chatName,
+            icon = chatIcon!!,
         )
 
         setupChannel()
-        startForeground(chat.id.toInt(), createNotification(chat))
+        // i set the id to 1 + chat.id to avoid conflict with the notification id
+        startForeground(chat.id.toInt() + 1, createNotification(chat))
         return START_NOT_STICKY
     }
 

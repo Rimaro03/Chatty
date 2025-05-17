@@ -122,6 +122,9 @@ class MessageViewModel @Inject constructor(
 
     fun startFakeCall(context: Context) {
         val intent = Intent(context, FakeCallService::class.java)
+        intent.putExtra("chatId", chat.value!!.id)
+        intent.putExtra("chatName", chat.value!!.name)
+        intent.putExtra("chatIcon", chat.value!!.icon)
         context.startForegroundService(intent)
     }
 
