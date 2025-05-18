@@ -102,7 +102,6 @@ class MessageViewModel @Inject constructor(
                     chatId = _chatId.value!!,
                     isIncoming = true
                 )
-                Thread.sleep(1000)
                 send(message)
 
                 if (!_isVisible)

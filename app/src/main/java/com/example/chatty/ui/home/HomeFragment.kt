@@ -3,20 +3,18 @@ package com.example.chatty.ui.home
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.MenuHost
-import androidx.core.view.MenuProvider
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatty.R
@@ -39,7 +37,13 @@ class HomeFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // Toolbar
-        (requireActivity() as AppCompatActivity).setSupportActionBar(view.findViewById(R.id.home_toolbar))
+        val toolBar = view.findViewById<Toolbar>(R.id.home_toolbar)
+        (requireActivity() as AppCompatActivity).setSupportActionBar(toolBar)
+        // Bind navcontroller to toolbar for back button
+        val navController = findNavController()
+        val appBarConfiguration = AppBarConfiguration(navController.graph)
+        toolBar.setupWithNavController(navController, appBarConfiguration)
+        // Add menu to toolbar
         val menuButton = view.findViewById<ImageButton>(R.id.toolbar_more_button)
         menuButton.setOnClickListener {
             val popup = PopupMenu(requireContext(), it)
@@ -55,7 +59,6 @@ class HomeFragment: Fragment() {
                     else -> false
                 }
             }
-
             popup.show()
         }
 

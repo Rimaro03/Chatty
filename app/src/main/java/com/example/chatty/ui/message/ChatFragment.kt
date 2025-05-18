@@ -37,12 +37,12 @@ class ChatFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // Toolbar
-        (requireActivity() as AppCompatActivity).setSupportActionBar(view.findViewById(R.id.chat_toolbar))
+        val toolBar = view.findViewById<Toolbar>(R.id.chat_toolbar)
+        (requireActivity() as AppCompatActivity).setSupportActionBar(toolBar)
         // Bind navcontroller to toolbar for back button
         val navController = findNavController()
         val appBarConfiguration = AppBarConfiguration(navController.graph)
-        view.findViewById<Toolbar>(R.id.chat_toolbar)
-            .setupWithNavController(navController = navController, configuration = appBarConfiguration)
+        toolBar.setupWithNavController(navController, appBarConfiguration)
 
         // get contact id from HomeFragment
         messageViewModel.setChatId(arguments?.getString("contactId")?.toLong() ?: 0L)
