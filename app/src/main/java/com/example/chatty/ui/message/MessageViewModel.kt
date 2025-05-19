@@ -10,7 +10,7 @@ import androidx.lifecycle.asFlow
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import com.example.chatty.BuildConfig
-import com.example.chatty.com.example.chatty.utils.FakeCallService
+import com.example.chatty.utils.FakeCallService
 import com.example.chatty.models.Chat
 import com.example.chatty.models.Message
 import com.example.chatty.repository.ChatRepository

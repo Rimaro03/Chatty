@@ -1,4 +1,4 @@
-package com.example.chatty.com.example.chatty.utils
+package com.example.chatty.utils
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -9,9 +9,9 @@ import android.content.Intent
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import androidx.core.app.Person
-import androidx.core.net.toUri
 import com.example.chatty.R
 import com.example.chatty.models.Chat
+import android.util.Log
 
 class FakeCallService : Service() {
 
@@ -20,6 +20,8 @@ class FakeCallService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+
+        Log.d("FakeCallService", "Service started")
 
         // take the chat from the intent
         val chatId = intent?.getLongExtra("chatId", 0L)
@@ -71,14 +73,26 @@ class FakeCallService : Service() {
             .setIcon(androidx.core.graphics.drawable.IconCompat.createWithResource(appContext, chat.icon))
             .build()
 
-         // Notification action: open chat (message fragment) of the provided contact (senderId)
-        val pendingIntent = PendingIntent.getActivity(
-            appContext,
+        // Decline PendingIntent (BroadcastReceiver)
+        val declineIntent = Intent(this, CallReceiver::class.java).apply {
+            action = "DECLINE_CALL"
+        }
+        val declinePendingIntent = PendingIntent.getBroadcast(
+            this,
+            0,
+            declineIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+// Answer PendingIntent (Activity)
+        val answerIntent = Intent(this, OngoingCallActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        }
+        val answerPendingIntent = PendingIntent.getActivity(
+            this,
             1,
-            Intent(Intent.ACTION_VIEW, "chatty://chat/${chat.id}".toUri()).apply {
-                setPackage(appContext.packageName)
-            },
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+            answerIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
         val builder = NotificationCompat.Builder(appContext, CHANNEL_CALL)
@@ -86,13 +100,18 @@ class FakeCallService : Service() {
             .setStyle(
                 NotificationCompat.CallStyle.forIncomingCall(
                     person,
-                    pendingIntent,
-                    pendingIntent
+                    declinePendingIntent,
+                    answerPendingIntent
                 )
             )
             .setChannelId(CHANNEL_CALL)
 
         return builder.build()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("FakeCallService", "Service destroyed")
     }
 
 }
