@@ -125,6 +125,7 @@ class MessageViewModel @Inject constructor(
         intent.putExtra("chatId", chat.value!!.id)
         intent.putExtra("chatName", chat.value!!.name)
         intent.putExtra("chatIcon", chat.value!!.icon)
+        intent.action = "INCOMING_CALL"
         context.startForegroundService(intent)
     }
 

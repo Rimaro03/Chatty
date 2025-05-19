@@ -32,10 +32,6 @@
                 <data android:scheme="chatty" android:host="chat" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".utils.OngoingCallActivity"
-            android:exported="true"
-        />
         <service
             android:name=".utils.FakeCallService"
             android:exported="false"
