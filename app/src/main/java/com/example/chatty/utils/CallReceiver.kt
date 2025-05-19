@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import com.example.chatty.R
 
 class CallReceiver : BroadcastReceiver() {
 
@@ -20,6 +21,9 @@ class CallReceiver : BroadcastReceiver() {
                 context.stopService(callIntent)
 
                 callIntent.action = "ONGOING_CALL"
+                callIntent.putExtra("chatId", intent.getLongExtra("chatId", 0L))
+                callIntent.putExtra("chatName", intent.getStringExtra("chatName"))
+                callIntent.putExtra("chatIcon", intent.getIntExtra("chatIcon", R.drawable.boneca))
                 context.startService(callIntent)
             }
         }

@@ -15,6 +15,11 @@ import android.util.Log
 
 class FakeCallService : Service() {
 
+    // Person that represents the caller
+    private lateinit var person: Person
+    // id of the chat
+    private var id : Long = 0L
+
     override fun onBind(intent: Intent?): IBinder? {
         return null
     }
@@ -24,28 +29,25 @@ class FakeCallService : Service() {
         Log.d("FakeCallService", "Service started")
 
         // take the chat from the intent
-        val chatId = intent?.getLongExtra("chatId", 0L)
-        val chatName = intent?.getStringExtra("chatName") ?: "Caller Name"
-        val chatIcon = intent?.getIntExtra("chatIcon", R.drawable.boneca)
+        id = intent?.getLongExtra("chatId", 0L)!!
 
-        val chat = Chat(
-            id = chatId!!,
-            name = chatName,
-            icon = chatIcon!!,
-        )
+        person = Person.Builder()
+            .setName(intent.getStringExtra("chatName") ?: "Caller Name")
+            .setIcon(androidx.core.graphics.drawable.IconCompat.createWithResource(appContext, intent.getIntExtra("chatIcon", R.drawable.boneca)))
+            .build()
 
         setupChannel()
 
         when (intent.action) {
             "INCOMING_CALL" -> {
-                Log.d("FakeCallService", "Incoming call from ${chat.name}")
+                Log.d("FakeCallService", "Incoming call from ${person.name}")
                 // i set the id to 1 + chat.id to avoid conflict with the notification id
-                startForeground(chat.id.toInt() + 1, createIncomingNotification(chat))
+                startForeground(id.toInt() + 1, createIncomingNotification())
             }
             "ONGOING_CALL" -> {
-                Log.d("FakeCallService", "Ongoing call with ${chat.name}")
+                Log.d("FakeCallService", "Ongoing call with ${person.name}")
                 // i set the id to 1 + chat.id to avoid conflict with the notification id
-                startForeground(chat.id.toInt() + 1, createOngoingNotification(chat))
+                startForeground(id.toInt() + 1, createOngoingNotification())
             }
         }
 
@@ -76,15 +78,7 @@ class FakeCallService : Service() {
         )
     }
 
-    fun createIncomingNotification(
-        chat: Chat
-    ) : android.app.Notification {
-        // person for the call
-        val person = Person.Builder()
-            .setName(chat.name)
-            .setIcon(androidx.core.graphics.drawable.IconCompat.createWithResource(appContext, chat.icon))
-            .build()
-
+    fun createIncomingNotification() : android.app.Notification {
         // Decline PendingIntent (BroadcastReceiver)
         val declineIntent = Intent(this, CallReceiver::class.java).apply {
             action = "DECLINE_CALL"
@@ -99,6 +93,9 @@ class FakeCallService : Service() {
         // Answer PendingIntent (BroadcastReceiver)
         val answerIntent = Intent(this, CallReceiver::class.java).apply {
             action = "ANSWER_CALL"
+            putExtra("chatId", id)
+            putExtra("chatName", person.name)
+            putExtra("chatIcon", person.icon?.resId)
         }
         val answerPendingIntent = PendingIntent.getBroadcast(
             this,
@@ -121,15 +118,7 @@ class FakeCallService : Service() {
         return builder.build()
     }
 
-    fun createOngoingNotification (
-        chat : Chat
-    ) : android.app.Notification {
-
-        // person for the call
-        val person = Person.Builder()
-            .setName(chat.name)
-            .setIcon(androidx.core.graphics.drawable.IconCompat.createWithResource(appContext, chat.icon))
-            .build()
+    fun createOngoingNotification () : android.app.Notification {
 
         val hangUpIntent = Intent(this, CallReceiver::class.java).apply {
             action = "DECLINE_CALL"
