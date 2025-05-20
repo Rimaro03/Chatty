@@ -13,10 +13,15 @@ import androidx.core.app.NotificationManagerCompat
 import dagger.hilt.android.AndroidEntryPoint
 import com.example.chatty.R
 import com.example.chatty.repository.ChatRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ReplyReceiver : BroadcastReceiver() {
+class ReplyReceiver: BroadcastReceiver() {
+    @Inject
+    lateinit var chatRepository: ChatRepository
 
     override fun onReceive(context: Context, intent: Intent) {
         Log.d("ReplyReceiver", "Intent received")
@@ -27,6 +32,11 @@ class ReplyReceiver : BroadcastReceiver() {
         val receivedMessage = intent.getStringExtra("last_message")
         val contactName = intent.getStringExtra("contact_name")
         val chatId = intent.getIntExtra("chat_id", 0)
+
+        // sending quick response
+        CoroutineScope(Dispatchers.IO).launch {
+            chatRepository.sendMessage(message.toString(), chatId.toLong())
+        }
 
         // Build a new notification, which informs the user that the system
         // handled their interaction with the previous notification.
