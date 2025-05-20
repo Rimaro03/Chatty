@@ -101,10 +101,11 @@
             style="@style/Widget.MaterialComponents.Button.Icon"
             android:id="@+id/send_btn"
             android:layout_width="40dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             app:iconSize="24dp"
             android:padding="8dp"
-            app:icon="@drawable/send_icon"/>
+            app:icon="@drawable/send_icon"
+            android:layout_gravity="bottom"/>
 
     </LinearLayout>
 
