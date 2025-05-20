@@ -12,7 +12,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
 import dagger.hilt.android.AndroidEntryPoint
 import com.example.chatty.R
-import com.example.chatty.ui.message.MessageViewModel
+import com.example.chatty.repository.ChatRepository
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -38,7 +38,6 @@ class ReplyReceiver : BroadcastReceiver() {
                     .bigText("${contactName}: ${receivedMessage}\nYou: $message")
             )
             .build()
-
         // Check for notification permission
         with (NotificationManagerCompat.from(context)) {
             if (ActivityCompat.checkSelfPermission(
@@ -50,6 +49,23 @@ class ReplyReceiver : BroadcastReceiver() {
                 return@with
             }
         }
+
         NotificationManagerCompat.from(context).notify(chatId, repliedNotification)
+
+        /*
+        CoroutineScope(Dispatchers.IO).launch {
+            if (message != null) {
+                val chatId = intent.getIntExtra("chat_id", 0)
+                val newMessage = Message(
+                    content = message.toString(),
+                    chatId = chatId.toLong(),
+                    timestamp = DateTimeFormatter.ISO_INSTANT.format(Instant.now()).toString(),
+                    isIncoming = false
+                )
+                val notifications = Notifications(context)
+
+                chatRepository.sendMessage(newMessage, Notifications(context))
+            }
+        }*/
     }
 }

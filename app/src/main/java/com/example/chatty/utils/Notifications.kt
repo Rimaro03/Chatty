@@ -16,6 +16,7 @@ import com.example.chatty.models.Chat
 class Notifications(private val context: Context) {
     private val appContext = context.applicationContext
     private val notificationManager = appContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    private val lastTwoMessages = mutableListOf<Pair<String, String>>("contact_name" to "message_content", "contact_name" to "message_content")
 
     // create the RemoteInput used to implement the quick reply feature
     private val KEY_TEXT_REPLY = "quick_reply"
@@ -28,7 +29,6 @@ class Notifications(private val context: Context) {
     companion object {
         private const val CHANNEL_NEW_MESSAGE = "new_message"
         private const val GROUP_NOTIFICATION = "group_notification"
-        val lastTwoMessages = mutableListOf<Pair<String, String>>("contact_name" to "message_content", "contact_name" to "message_content")
     }
 
     fun setupChannel() {
@@ -111,7 +111,7 @@ class Notifications(private val context: Context) {
         notificationManager.notify(message.chatId.toInt(), builder.build())
 
         // create a summary notification
-        if (lastTwoMessages.size > 1) {
+        if (lastTwoMessages.size > 1 && lastTwoMessages[0].first != lastTwoMessages[1].first && lastTwoMessages[1].first != "contact_name") {
             createSummeryNotification()
         }
     }
