@@ -12,12 +12,16 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
 import dagger.hilt.android.AndroidEntryPoint
 import com.example.chatty.R
-import com.example.chatty.ui.message.MessageViewModel
+import com.example.chatty.repository.ChatRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
 @AndroidEntryPoint
-class ReplyReceiver : BroadcastReceiver() {
+class ReplyReceiver: BroadcastReceiver() {
+    @Inject
+    lateinit var chatRepository: ChatRepository
 
     override fun onReceive(context: Context, intent: Intent) {
         Log.d("ReplyReceiver", "Intent received")
@@ -29,6 +33,11 @@ class ReplyReceiver : BroadcastReceiver() {
         val contactName = intent.getStringExtra("contact_name")
         val chatId = intent.getIntExtra("chat_id", 0)
 
+        // sending quick response
+        CoroutineScope(Dispatchers.IO).launch {
+            chatRepository.sendMessage(message.toString(), chatId.toLong())
+        }
+
         // Build a new notification, which informs the user that the system
         // handled their interaction with the previous notification.
         val repliedNotification = Notification.Builder(context, "new_message")
@@ -39,7 +48,6 @@ class ReplyReceiver : BroadcastReceiver() {
                     .bigText("${contactName}: ${receivedMessage}\nYou: $message")
             )
             .build()
-
         // Check for notification permission
         with (NotificationManagerCompat.from(context)) {
             if (ActivityCompat.checkSelfPermission(
@@ -51,6 +59,23 @@ class ReplyReceiver : BroadcastReceiver() {
                 return@with
             }
         }
+
         NotificationManagerCompat.from(context).notify(chatId, repliedNotification)
+
+        /*
+        CoroutineScope(Dispatchers.IO).launch {
+            if (message != null) {
+                val chatId = intent.getIntExtra("chat_id", 0)
+                val newMessage = Message(
+                    content = message.toString(),
+                    chatId = chatId.toLong(),
+                    timestamp = DateTimeFormatter.ISO_INSTANT.format(Instant.now()).toString(),
+                    isIncoming = false
+                )
+                val notifications = Notifications(context)
+
+                chatRepository.sendMessage(newMessage, Notifications(context))
+            }
+        }*/
     }
 }
