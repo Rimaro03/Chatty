@@ -27,31 +27,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MessageViewModel @Inject constructor(
-    application: Application,
     private val chatRepository: ChatRepository
 ): ViewModel() {
-
-    // notifications set-up
-    private var notifications: Notifications =
-        Notifications(context = application.applicationContext)
-    private var _isVisible: Boolean = false
-
-    fun onFragmentVisible() {
-        _isVisible = true
-        chatRepository.isFragmentVisible = true
-    }
-
-    fun onFragmentHidden() {
-        _isVisible = false
-        chatRepository.isFragmentVisible = false
-    }
-
-    init {
-        notifications.setupChannel()
-    }
-
-    // TODO: change _chat.value!! with a check for null
-
     // changed from UI by clicking on contact
     private val _chatId = MutableLiveData(0L)
 
@@ -69,26 +46,12 @@ class MessageViewModel @Inject constructor(
         _chatId.value = chatId
     }
 
+    // TODO: change _chat.value!! with a check for null
     fun sendMessage(content: String) {
         viewModelScope.launch {
-            chatRepository.sendMessage(
-                Message(
-                    content = content,
-                    timestamp = DateTimeFormatter.ISO_INSTANT.format(Instant.now()).toString(),
-                    chatId = chat.value!!.id,
-                    isIncoming = false
-                ),
-                notifications
-            )
+            chatRepository.sendMessage(content, _chatId.value!!)
         }
     }
-
-
-    //private fun send(message: Message) {
-    //    viewModelScope.launch {
-    //        chatRepository.sendMessage(message)
-    //    }
-    //}
 
     fun startFakeCall(context: Context) {
         val intent = Intent(context, FakeCallService::class.java)
@@ -99,4 +62,7 @@ class MessageViewModel @Inject constructor(
         context.startForegroundService(intent)
     }
 
+    fun onFragmentVisible() = chatRepository.onFragmentVisible()
+
+    fun onFragmentHidden() = chatRepository.onFragmentHidden()
 }

@@ -1,5 +1,6 @@
 package com.example.chatty.repository
 
+import android.app.Application
 import androidx.lifecycle.asFlow
 import com.example.chatty.BuildConfig
 import com.example.chatty.data.ChatDao
@@ -19,8 +20,23 @@ import androidx.lifecycle.LiveData
 class ChatRepository @Inject constructor(
     private val messageDao: MessageDao,
     private val chatDao: ChatDao,
+    private val application: Application,
 ) {
-    var isFragmentVisible = false
+    private var notifications: Notifications = Notifications(context = application.applicationContext)
+    private var _isVisible: Boolean = false
+
+    init {
+        notifications.setupChannel()
+    }
+
+    fun onFragmentVisible() {
+        _isVisible = true
+    }
+
+    fun onFragmentHidden() {
+        _isVisible = false
+    }
+
 
     // contact
     fun getChats() = chatDao.getAll()
@@ -30,16 +46,25 @@ class ChatRepository @Inject constructor(
 
     // messages
     fun getMessages(chatId: Long) = messageDao.getAllByChatId(chatId)
+
     suspend fun clearChatHistory(chatId: Long) = messageDao.deleteAllByChatId(chatId)
+
     suspend fun clearHistory() = messageDao.deleteAll()
 
-    suspend fun sendMessage(message: Message, notification: Notifications) {
+    suspend fun sendMessage(content: String, chatId: Long) {
+        val message = Message(
+            content = content,
+            timestamp = DateTimeFormatter.ISO_INSTANT.format(Instant.now()).toString(),
+            chatId = chatId,
+            isIncoming = false
+        )
+
         messageDao.insert(message)
 
         val chat = getChat(message.chatId).asFlow().first()
 
         Log.d ("ChatRepository", "Message sent: ${message.content}")
-        Log.d ("ChatRepository", "Chat ${chat.name} is visible: $isFragmentVisible")
+        Log.d ("ChatRepository", "Chat ${chat.name} is visible: $_isVisible")
 
         val generativeModel = GenerativeModel(
             modelName = "gemini-2.0-flash",
@@ -67,12 +92,12 @@ class ChatRepository @Inject constructor(
                 chatId = message.chatId,
                 isIncoming = true
             )
-            Thread.sleep(1000)
+            Thread.sleep(500)
 
             messageDao.insert(message)
             Log.d ("ChatRepository", "Message received: ${message.content}")
-            if (!isFragmentVisible) {
-                notification.showNotification(message, chat)
+            if (!_isVisible) {
+                notifications.showNotification(message, chat)
             }
         }
     }
