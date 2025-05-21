@@ -19,10 +19,15 @@ class Notifications(private val context: Context) {
     private val notificationManager = appContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     private val lastTwoMessages = mutableListOf<Pair<String, String>>("contact_name" to "message_content", "contact_name" to "message_content")
 
+    init {
+        Log.d("Notifications", "Notification created")
+    }
+
     companion object {
         private const val KEY_TEXT_REPLY = "quick_reply"
         private const val CHANNEL_NEW_MESSAGE = "new_message"
         private const val GROUP_NOTIFICATION = "group_notification"
+
     }
 
     // create the RemoteInput used to implement the quick reply feature
@@ -72,7 +77,7 @@ class Notifications(private val context: Context) {
 
         val markAsReadIntent = PendingIntent.getBroadcast(
             appContext,
-            2,
+            2 + chat.id.toInt(),
             Intent(context, ReadReceiver::class.java).apply {
                 putExtra("chat_id", message.chatId.toInt())
             },
@@ -81,7 +86,7 @@ class Notifications(private val context: Context) {
 
         val replyPendingIntent: PendingIntent = PendingIntent.getBroadcast(
             context,
-            3,
+            3 + chat.id.toInt(),
             Intent(context, ReplyReceiver::class.java).apply {
                 putExtra("last_message", message.content)
                 putExtra("contact_name", chat.name)

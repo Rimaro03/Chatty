@@ -1,5 +1,6 @@
 package com.example.chatty.ui.message
 
+import android.app.Application
 import android.content.Context
 import android.content.Intent
 import androidx.lifecycle.LiveData
@@ -19,6 +20,7 @@ import javax.inject.Inject
 class MessageViewModel @Inject constructor(
     private val chatRepository: ChatRepository
 ): ViewModel() {
+
     // changed from UI by clicking on contact
     private val _chatId = MutableLiveData(0L)
 

@@ -22,12 +22,8 @@ class ChatRepository @Inject constructor(
     private val chatDao: ChatDao,
     private val application: Application,
 ) {
-    private var notifications: Notifications = Notifications(context = application.applicationContext)
     private var _isVisible: Boolean = false
-
-    init {
-        notifications.setupChannel()
-    }
+    private val notifications : Notifications = Notifications(context = application.applicationContext)
 
     fun onFragmentVisible() {
         _isVisible = true
@@ -37,6 +33,9 @@ class ChatRepository @Inject constructor(
         _isVisible = false
     }
 
+    init {
+        notifications.setupChannel()
+    }
 
     // contact
     fun getChats() = chatDao.getAll()
@@ -92,7 +91,6 @@ class ChatRepository @Inject constructor(
                 chatId = message.chatId,
                 isIncoming = true
             )
-            Thread.sleep(500)
 
             messageDao.insert(message)
             Log.d ("ChatRepository", "Message received: ${message.content}")
