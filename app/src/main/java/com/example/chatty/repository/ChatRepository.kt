@@ -84,6 +84,8 @@ class ChatRepository @Inject constructor(
             e.message
         }
 
+        Thread.sleep(500)
+
         if (response != null) {
             val message = Message(
                 content = response,

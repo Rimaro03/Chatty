@@ -13,11 +13,12 @@ import com.example.chatty.models.Message
 import androidx.core.net.toUri
 import com.example.chatty.models.Chat
 import android.util.Log
+import javax.inject.Singleton
 
+@Singleton
 class Notifications(private val context: Context) {
     private val appContext = context.applicationContext
     private val notificationManager = appContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-    private val lastTwoMessages = mutableListOf<Pair<String, String>>("contact_name" to "message_content", "contact_name" to "message_content")
 
     init {
         Log.d("Notifications", "Notification created")
@@ -28,6 +29,7 @@ class Notifications(private val context: Context) {
         private const val CHANNEL_NEW_MESSAGE = "new_message"
         private const val GROUP_NOTIFICATION = "group_notification"
 
+        private val lastTwoMessages = mutableListOf<Pair<String, String>>("contact_name" to "message_content", "contact_name" to "message_content")
     }
 
     // create the RemoteInput used to implement the quick reply feature
