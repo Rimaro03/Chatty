@@ -10,8 +10,10 @@ import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
@@ -65,12 +67,19 @@ class HomeFragment: Fragment() {
         // contact RecyclerView
         val contactRecyclerView = view.findViewById<RecyclerView>(R.id.contact_rv_list)
         contactRecyclerView.layoutManager = LinearLayoutManager(view.context)
-        val adapter = ContactAdapter(mutableListOf<Chat>())
+        fun onContactClick(chat: Chat) {
+            Log.d("HomeFragment", "navigated");
+            val deepLinkReq = NavDeepLinkRequest.Builder
+                .fromUri("chatty://chat/${chat.id}".toUri())
+                .build()
+            navController.navigate(deepLinkReq)
+        }
+        val adapter = ContactAdapter(mutableListOf<Chat>(), ::onContactClick)
         contactRecyclerView.adapter = adapter
         homeViewModel.chatList.observe(viewLifecycleOwner) { chatList ->
             Log.d("HomeFragment", "chatList: $chatList")
             // Disabling chat with myself (0L is my ID)
-            adapter.submitList(chatList.dropWhile { contact -> contact.id == 0L })
+            adapter.submitList(chatList.filter { it.id != 0L })
         }
     }
 }

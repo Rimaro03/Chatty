@@ -73,6 +73,7 @@ class Notifications(private val context: Context) {
             2,
             Intent(context, ReadReceiver::class.java).apply {
                 putExtra("chat_id", message.chatId.toInt())
+                putExtra("message_id", message.id)
             },
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
@@ -111,9 +112,9 @@ class Notifications(private val context: Context) {
         notificationManager.notify(message.chatId.toInt(), builder.build())
 
         // create a summary notification
-        if (lastTwoMessages.size > 1) {
-            createSummeryNotification()
-        }
+//        if (lastTwoMessages.size > 1) {
+//            createSummeryNotification()
+//        }
     }
 
     private fun createSummeryNotification() {

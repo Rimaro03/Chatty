@@ -12,11 +12,17 @@ interface MessageDao {
     @Query("SELECT * FROM Message WHERE chatId = :chatId")
     fun getAllByChatId(chatId: Long): LiveData<List<Message>>
 
+    @Query("SELECT * FROM Message WHERE id = :id")
+    fun getById(id: Long): LiveData<Message>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(message: Message)
 
     @Query("DELETE FROM Message WHERE id = :chatId")
     suspend fun deleteAllByChatId(chatId: Long)
+
+    @Query("UPDATE Message SET read = 1 WHERE chatId = :chatId")
+    suspend fun markAsRead(chatId: Long)
 
     @Query("DELETE FROM Message")
     suspend fun deleteAll()

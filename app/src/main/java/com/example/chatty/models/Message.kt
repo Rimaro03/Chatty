@@ -22,5 +22,6 @@ data class Message (
     val mediaMimeType: String? = null,
     val timestamp: String? = null,
     val chatId: Long,
-    val isIncoming: Boolean
+    val isIncoming: Boolean,
+    val read: Boolean? = false
 )
