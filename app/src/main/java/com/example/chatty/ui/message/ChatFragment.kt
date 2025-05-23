@@ -1,6 +1,7 @@
 package com.example.chatty.ui.message
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.asFlow
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
@@ -19,11 +24,17 @@ import com.example.chatty.R
 import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
 class ChatFragment: Fragment() {
     private val messageViewModel: MessageViewModel by viewModels()
+
+    companion object {
+        private val TAG = ChatFragment::class.java.simpleName
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,6 +47,16 @@ class ChatFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // get contact id from HomeFragment
+        val contactId = arguments?.getString("contactId")?.toLong()
+        if(contactId == null) {
+            Log.e(TAG, "Couldn't fetch contactId from HomeFragment")
+            requireActivity().finishAndRemoveTask()
+            return
+        }
+        // if it's not null, set it in the viewmodel
+        messageViewModel.setChatId(contactId)
+
         // Toolbar
         val toolBar = view.findViewById<Toolbar>(R.id.chat_toolbar)
         (requireActivity() as AppCompatActivity).setSupportActionBar(toolBar)
@@ -44,18 +65,23 @@ class ChatFragment: Fragment() {
         val appBarConfiguration = AppBarConfiguration(navController.graph)
         toolBar.setupWithNavController(navController, appBarConfiguration)
 
-        // get contact id from HomeFragment
-        messageViewModel.setChatId(arguments?.getString("contactId")?.toLong() ?: 0L)
-
         // message RecyclerView
         val messageRecyclerView = view.findViewById<RecyclerView>(R.id.message_rv_list)
         messageRecyclerView.layoutManager = LinearLayoutManager(view.context).apply { stackFromEnd = true }
         val adapter = MessageAdapter(mutableListOf())
         messageRecyclerView.adapter = adapter
 
-        messageViewModel.chatMessages.observe(viewLifecycleOwner) { newList ->
+        /*messageViewModel.chatMessages.observe(viewLifecycleOwner) { newList ->
             messageRecyclerView.scrollToPosition(newList.size - 1)
             adapter.submitList(newList)
+        } */
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                messageViewModel.chatMessages.collectLatest { newList ->
+                    adapter.submitList(newList)
+                }
+            }
         }
 
         //input field

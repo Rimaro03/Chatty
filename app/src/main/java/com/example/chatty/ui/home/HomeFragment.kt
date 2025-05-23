@@ -74,6 +74,7 @@ class HomeFragment: Fragment() {
                 .build()
             navController.navigate(deepLinkReq)
         }
+        // passing a reference to the onContactClick function to the ContactAdapter
         val adapter = ContactAdapter(mutableListOf<Chat>(), ::onContactClick)
         contactRecyclerView.adapter = adapter
         homeViewModel.chatList.observe(viewLifecycleOwner) { chatList ->

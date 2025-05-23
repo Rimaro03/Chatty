@@ -16,7 +16,14 @@ import com.google.ai.client.generativeai.GenerativeModel
 import com.google.ai.client.generativeai.type.Content
 import com.google.ai.client.generativeai.type.content
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNot
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.format.DateTimeFormatter
@@ -56,9 +63,13 @@ class MessageViewModel @Inject constructor(
     }
 
     // watch for changes in chatId to retrieve the chat messages
-    val chatMessages: LiveData<List<Message>> = _chatId.switchMap { newChatId ->
-            chatRepository.getMessages(newChatId)
-    }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val chatMessages: Flow<List<Message>> = _chatId.asFlow()
+        .filterNotNull()
+        .distinctUntilChanged()
+        .flatMapLatest { chatId ->
+            chatRepository.getMessages(chatId)
+        }
 
     fun setChatId(chatId: Long) {
         _chatId.value = chatId
@@ -69,7 +80,7 @@ class MessageViewModel @Inject constructor(
             Message(
                 content = content,
                 timestamp = DateTimeFormatter.ISO_INSTANT.format(Instant.now()).toString(),
-                chatId = chat.value!!.id,
+                chatId = _chatId.value!!,
                 isIncoming = false
             )
         )
@@ -84,7 +95,7 @@ class MessageViewModel @Inject constructor(
         )
 
         viewModelScope.launch {
-            val messageList = chatRepository.getMessages(chat.value!!.id).asFlow().first()
+            val messageList = chatRepository.getMessages(chat.value!!.id).first()
             val chatContents = messageList.map { Content.Builder().text(it.content).build() }.toList()
 
             val chatBot = generativeModel.startChat(chatContents)

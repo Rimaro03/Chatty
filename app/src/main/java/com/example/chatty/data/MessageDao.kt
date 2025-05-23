@@ -6,11 +6,12 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.chatty.models.Message
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MessageDao {
     @Query("SELECT * FROM Message WHERE chatId = :chatId")
-    fun getAllByChatId(chatId: Long): LiveData<List<Message>>
+    fun getAllByChatId(chatId: Long): Flow<List<Message>>
 
     @Query("SELECT * FROM Message WHERE id = :id")
     fun getById(id: Long): LiveData<Message>
