@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatty.R
 import com.example.chatty.models.Chat
+import com.example.chatty.models.ChatWithLastMessage
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -75,12 +76,12 @@ class HomeFragment: Fragment() {
             navController.navigate(deepLinkReq)
         }
         // passing a reference to the onContactClick function to the ContactAdapter
-        val adapter = ContactAdapter(mutableListOf<Chat>(), ::onContactClick)
+        val adapter = ContactAdapter(mutableListOf<ChatWithLastMessage>(), ::onContactClick)
         contactRecyclerView.adapter = adapter
-        homeViewModel.chatList.observe(viewLifecycleOwner) { chatList ->
+        homeViewModel.chatWithLastMessageList.observe(viewLifecycleOwner) { chatList ->
             Log.d("HomeFragment", "chatList: $chatList")
             // Disabling chat with myself (0L is my ID)
-            adapter.submitList(chatList.filter { it.id != 0L })
+            adapter.submitList(chatList.filter { it.chat.id != 0L })
         }
     }
 }

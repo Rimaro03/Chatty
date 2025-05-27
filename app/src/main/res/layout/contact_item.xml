@@ -22,11 +22,11 @@
         android:textStyle="bold"
         android:text="@string/contact_name_placeholder"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/contact_description_tv"
+        app:layout_constraintBottom_toTopOf="@+id/contact_last_msg_tv"
         app:layout_constraintStart_toEndOf="@+id/contact_img" />
 
     <TextView
-        android:id="@+id/contact_description_tv"
+        android:id="@+id/contact_last_msg_tv"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/contact_description"

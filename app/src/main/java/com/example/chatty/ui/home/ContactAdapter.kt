@@ -8,34 +8,39 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatty.R
 import com.example.chatty.models.Chat
+import com.example.chatty.models.ChatWithLastMessage
 import com.google.android.material.imageview.ShapeableImageView
 
 class ContactAdapter(
-    private var chatList: List<Chat>,
+    private var chatList: List<ChatWithLastMessage>,
     val onChatClicked: (Chat) -> Unit
 ): RecyclerView.Adapter<ContactAdapter.ContactViewHolder>() {
     class ContactViewHolder(
         itemView: View,
     ): RecyclerView.ViewHolder(itemView){
         private val contactTv: TextView = itemView.findViewById(R.id.contact_name_tv)
-        private val contactDescriptionTv: TextView = itemView.findViewById(R.id.contact_description_tv)
+        private val contactLastMsgTv: TextView = itemView.findViewById(R.id.contact_last_msg_tv)
         private val contactIcon: ShapeableImageView = itemView.findViewById(R.id.contact_img)
 
-        fun bind(chat: Chat, onChatClicked: (Chat) -> Unit) {
+        fun bind(chatWithLastMessage: ChatWithLastMessage, onChatClicked: (Chat) -> Unit) {
+            val chat = chatWithLastMessage.chat
+            val lastMessage = chatWithLastMessage.messageContent
             contactTv.text = chat.name
             // set image with contact.icon
             itemView.setOnClickListener {
                 onChatClicked(chat)
                 Log.d("ContactAdapter", "onChatClicked: $chat")
             }
-            contactDescriptionTv.text = itemView.context.getString(R.string.contact_description, chat.name)
+            // trim last message to 30 characters
+            contactLastMsgTv.text = lastMessage?.take(30)
             contactIcon.setImageResource(chat.icon)
         }
     }
 
-    fun submitList(newList: List<Chat>) {
+    // TODO: use better function that notifyDataSetChanged()
+    fun submitList(newList: List<ChatWithLastMessage>) {
         chatList = newList
-        notifyItemRangeInserted(0, newList.size)
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContactViewHolder {

@@ -26,6 +26,7 @@ class MessageAdapter(private var messageList: MutableList<Message>) : RecyclerVi
         }
     }
 
+    // TODO: use better function that notifyDataSetChanged()
     fun submitList(newList: List<Message>) {
         messageList.clear()
         messageList.addAll(newList)
