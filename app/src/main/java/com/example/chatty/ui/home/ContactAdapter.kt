@@ -4,6 +4,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatty.R
@@ -21,10 +22,13 @@ class ContactAdapter(
         private val contactTv: TextView = itemView.findViewById(R.id.contact_name_tv)
         private val contactLastMsgTv: TextView = itemView.findViewById(R.id.contact_last_msg_tv)
         private val contactIcon: ShapeableImageView = itemView.findViewById(R.id.contact_img)
+        private val unreadIcon: ImageView = itemView.findViewById(R.id.mark_read_icon)
 
         fun bind(chatWithLastMessage: ChatWithLastMessage, onChatClicked: (Chat) -> Unit) {
             val chat = chatWithLastMessage.chat
             val lastMessage = chatWithLastMessage.messageContent
+            val lastMessageRead = chatWithLastMessage.messageRead
+
             contactTv.text = chat.name
             // set image with contact.icon
             itemView.setOnClickListener {
@@ -34,6 +38,11 @@ class ContactAdapter(
             // trim last message to 30 characters
             contactLastMsgTv.text = lastMessage?.take(30)
             contactIcon.setImageResource(chat.icon)
+            if(lastMessageRead == false){
+                unreadIcon.visibility = View.VISIBLE
+            } else{
+                unreadIcon.visibility = View.INVISIBLE
+            }
         }
     }
 
