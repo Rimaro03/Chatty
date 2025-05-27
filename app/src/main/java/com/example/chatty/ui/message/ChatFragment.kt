@@ -77,7 +77,7 @@ class ChatFragment: Fragment() {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 messageViewModel.chatMessages.observe(viewLifecycleOwner) { newList ->
                     adapter.submitList(newList)
-                    messageRecyclerView.scrollToPosition(newList.size - 1)
+                    //messageRecyclerView.scrollToPosition(newList.size - 1)
                 }
             }
         }
