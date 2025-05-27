@@ -64,12 +64,9 @@ class MessageViewModel @Inject constructor(
 
     // watch for changes in chatId to retrieve the chat messages
     @OptIn(ExperimentalCoroutinesApi::class)
-    val chatMessages: Flow<List<Message>> = _chatId.asFlow()
-        .filterNotNull()
-        .distinctUntilChanged()
-        .flatMapLatest { chatId ->
-            chatRepository.getMessages(chatId)
-        }
+    val chatMessages: LiveData<List<Message>> = _chatId.switchMap { newChatId ->
+        chatRepository.getMessages(newChatId)
+    }
 
     fun setChatId(chatId: Long) {
         _chatId.value = chatId
@@ -95,7 +92,7 @@ class MessageViewModel @Inject constructor(
         )
 
         viewModelScope.launch {
-            val messageList = chatRepository.getMessages(chat.value!!.id).first()
+            val messageList = chatRepository.getMessages(chat.value!!.id).asFlow().first()
             val chatContents = messageList.map { Content.Builder().text(it.content).build() }.toList()
 
             val chatBot = generativeModel.startChat(chatContents)
@@ -106,6 +103,7 @@ class MessageViewModel @Inject constructor(
                 e.message
             }
 
+            kotlinx.coroutines.delay(1000)
             if (response != null) {
                 val message = Message(
                     content = response,

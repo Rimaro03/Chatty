@@ -1,5 +1,6 @@
 package com.example.chatty.repository
 
+import androidx.lifecycle.LiveData
 import com.example.chatty.data.ChatDao
 import com.example.chatty.data.MessageDao
 import com.example.chatty.models.Message
@@ -17,7 +18,7 @@ class ChatRepository @Inject constructor(
     fun getChat(chatId: Long) = chatDao.getById(chatId)
 
     // messages
-    fun getMessages(chatId: Long): Flow<List<Message>> = messageDao.getAllByChatId(chatId)
+    fun getMessages(chatId: Long): LiveData<List<Message>> = messageDao.getAllByChatId(chatId)
     suspend fun clearChatHistory(chatId: Long) = messageDao.deleteAllByChatId(chatId)
     suspend fun clearHistory() = messageDao.deleteAll()
     suspend fun markAsRead(chatId: Long) = messageDao.markAsRead(chatId)

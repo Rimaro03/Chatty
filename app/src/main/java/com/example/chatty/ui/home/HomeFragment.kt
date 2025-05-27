@@ -32,19 +32,18 @@ class HomeFragment: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_home, container, false)
+        val view = inflater.inflate(R.layout.fragment_home, container, false)
+
+        // Toolbar
+        val toolBar = view.findViewById<Toolbar>(R.id.home_toolbar)
+        (requireActivity() as AppCompatActivity).setSupportActionBar(toolBar)
+
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Toolbar
-        val toolBar = view.findViewById<Toolbar>(R.id.home_toolbar)
-        (requireActivity() as AppCompatActivity).setSupportActionBar(toolBar)
-        // Bind navcontroller to toolbar for back button
-        val navController = findNavController()
-        val appBarConfiguration = AppBarConfiguration(navController.graph)
-        toolBar.setupWithNavController(navController, appBarConfiguration)
         // Add menu to toolbar
         val menuButton = view.findViewById<ImageButton>(R.id.toolbar_more_button)
         menuButton.setOnClickListener {
@@ -65,6 +64,7 @@ class HomeFragment: Fragment() {
         }
 
         // contact RecyclerView
+        val navController = findNavController()
         val contactRecyclerView = view.findViewById<RecyclerView>(R.id.contact_rv_list)
         contactRecyclerView.layoutManager = LinearLayoutManager(view.context)
         fun onContactClick(chat: Chat) {

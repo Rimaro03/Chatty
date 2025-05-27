@@ -12,19 +12,15 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.asFlow
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatty.R
 import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 
@@ -41,29 +37,35 @@ class ChatFragment: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_chat, container, false)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
         // get contact id from HomeFragment
         val contactId = arguments?.getString("contactId")?.toLong()
         if(contactId == null) {
             Log.e(TAG, "Couldn't fetch contactId from HomeFragment")
             requireActivity().finishAndRemoveTask()
-            return
+            return null
         }
         // if it's not null, set it in the viewmodel
         messageViewModel.setChatId(contactId)
 
+        val view = inflater.inflate(R.layout.fragment_chat, container, false)
+
         // Toolbar
         val toolBar = view.findViewById<Toolbar>(R.id.chat_toolbar)
         (requireActivity() as AppCompatActivity).setSupportActionBar(toolBar)
+
         // Bind navcontroller to toolbar for back button
         val navController = findNavController()
-        val appBarConfiguration = AppBarConfiguration(navController.graph)
-        toolBar.setupWithNavController(navController, appBarConfiguration)
+        toolBar.setNavigationIcon(R.drawable.arrow_back)
+        toolBar.setNavigationOnClickListener {
+            navController.navigateUp()
+
+        }
+
+        return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         // message RecyclerView
         val messageRecyclerView = view.findViewById<RecyclerView>(R.id.message_rv_list)
@@ -71,15 +73,11 @@ class ChatFragment: Fragment() {
         val adapter = MessageAdapter(mutableListOf())
         messageRecyclerView.adapter = adapter
 
-        /*messageViewModel.chatMessages.observe(viewLifecycleOwner) { newList ->
-            messageRecyclerView.scrollToPosition(newList.size - 1)
-            adapter.submitList(newList)
-        } */
-
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                messageViewModel.chatMessages.collectLatest { newList ->
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                messageViewModel.chatMessages.observe(viewLifecycleOwner) { newList ->
                     adapter.submitList(newList)
+                    messageRecyclerView.scrollToPosition(newList.size - 1)
                 }
             }
         }

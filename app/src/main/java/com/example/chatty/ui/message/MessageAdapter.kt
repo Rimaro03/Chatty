@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.chatty.R
 import com.example.chatty.models.Message
 
-class MessageAdapter(private var messageList: List<Message>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class MessageAdapter(private var messageList: MutableList<Message>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     class OutgoingMessageViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         private val messageTV: TextView = itemView.findViewById(R.id.out_msg_tv)
@@ -27,7 +27,8 @@ class MessageAdapter(private var messageList: List<Message>) : RecyclerView.Adap
     }
 
     fun submitList(newList: List<Message>) {
-        messageList = newList
+        messageList.clear()
+        messageList.addAll(newList)
         notifyDataSetChanged()
     }
 

@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface MessageDao {
     @Query("SELECT * FROM Message WHERE chatId = :chatId")
-    fun getAllByChatId(chatId: Long): Flow<List<Message>>
+    fun getAllByChatId(chatId: Long): LiveData<List<Message>>
 
     @Query("SELECT * FROM Message WHERE id = :id")
     fun getById(id: Long): LiveData<Message>
