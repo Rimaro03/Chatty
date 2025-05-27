@@ -1,6 +1,7 @@
 package com.example.chatty.ui.message
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -109,9 +110,12 @@ class MessageViewModel @Inject constructor(
                     content = response,
                     timestamp = DateTimeFormatter.ISO_INSTANT.format(Instant.now()).toString(),
                     chatId = _chatId.value!!,
-                    isIncoming = true
+                    isIncoming = true,
+                    read = false
                 )
-                send(message)
+                val messageId = send(message)
+                message.id = messageId
+
 
                 if (!_isVisible)
                     notifications.showNotification(message, chat.value!!)
@@ -119,10 +123,13 @@ class MessageViewModel @Inject constructor(
         }
     }
 
-    private fun send(message: Message) {
+    private fun send(message: Message): Long {
+        // get message id
+        var messageId = 0L
         viewModelScope.launch {
-            chatRepository.sendMessage(message)
+            messageId = chatRepository.sendMessage(message)
         }
+        return messageId
     }
 
 }

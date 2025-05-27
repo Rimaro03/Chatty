@@ -16,7 +16,7 @@ import androidx.room.PrimaryKey
 )
 data class Message (
     @PrimaryKey(autoGenerate = true)
-    val id: Long = 0L,
+    var id: Long = 0,
     val content: String,
     val mediaUri: String? = null,
     val mediaMimeType: String? = null,

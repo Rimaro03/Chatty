@@ -20,13 +20,13 @@ interface MessageDao {
     fun getLastedMessage(chatId: Long): LiveData<Message>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(message: Message)
+    suspend fun insert(message: Message): Long
 
     @Query("DELETE FROM Message WHERE id = :chatId")
     suspend fun deleteAllByChatId(chatId: Long)
 
-    @Query("UPDATE Message SET read = 1 WHERE chatId = :chatId")
-    suspend fun markAsRead(chatId: Long)
+    @Query("UPDATE Message SET read = 1 WHERE id = :messageId")
+    suspend fun markAsRead(messageId: Long)
 
     @Query("DELETE FROM Message")
     suspend fun deleteAll()

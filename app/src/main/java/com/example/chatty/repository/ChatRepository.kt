@@ -26,9 +26,9 @@ class ChatRepository @Inject constructor(
     fun getMessages(chatId: Long): LiveData<List<Message>> = messageDao.getAllByChatId(chatId)
     suspend fun clearChatHistory(chatId: Long) = messageDao.deleteAllByChatId(chatId)
     suspend fun clearHistory() = messageDao.deleteAll()
-    suspend fun markAsRead(chatId: Long) = messageDao.markAsRead(chatId)
+    suspend fun markAsRead(messageId: Long) = messageDao.markAsRead(messageId)
 
-    suspend fun sendMessage(message: Message) {
-        messageDao.insert(message)
+    suspend fun sendMessage(message: Message): Long {
+        return messageDao.insert(message)
     }
 }

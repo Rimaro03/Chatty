@@ -23,7 +23,8 @@ class ReadReceiver : BroadcastReceiver() {
         val chatId = intent.getIntExtra("chat_id", 0)
 
         CoroutineScope(Dispatchers.IO).launch {
-            chatRepository.markAsRead(messageID.toLong())
+            Log.d("ReadReceiver", messageID.toString())
+            chatRepository.markAsRead(messageID)
         }
 
         NotificationManagerCompat.from(context).cancel(chatId)
