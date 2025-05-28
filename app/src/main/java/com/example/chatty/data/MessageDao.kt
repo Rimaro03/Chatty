@@ -19,7 +19,7 @@ interface MessageDao {
     @Query("SELECT * FROM Message WHERE chatId = :chatId ORDER BY timestamp DESC LIMIT 1")
     fun getLastedMessage(chatId: Long): LiveData<Message>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert
     suspend fun insert(message: Message): Long
 
     @Query("DELETE FROM Message WHERE id = :chatId")

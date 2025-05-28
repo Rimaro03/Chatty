@@ -113,23 +113,19 @@ class MessageViewModel @Inject constructor(
                     isIncoming = true,
                     read = false
                 )
-                val messageId = send(message)
-                message.id = messageId
-
-
-                if (!_isVisible)
-                    notifications.showNotification(message, chat.value!!)
+                send(message)
             }
         }
     }
 
-    private fun send(message: Message): Long {
-        // get message id
-        var messageId = 0L
+    private fun send(message: Message) {
         viewModelScope.launch {
-            messageId = chatRepository.sendMessage(message)
+            val messageId = chatRepository.sendMessage(message)
+            message.id = messageId
+
+            if (!_isVisible)
+                notifications.showNotification(message, chat.value!!)
         }
-        return messageId
     }
 
 }
