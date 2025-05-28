@@ -17,6 +17,7 @@ import com.google.ai.client.generativeai.GenerativeModel
 import com.google.ai.client.generativeai.type.Content
 import com.google.ai.client.generativeai.type.content
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -26,6 +27,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.Instant
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
@@ -42,10 +44,12 @@ class MessageViewModel @Inject constructor(
     private var _isVisible: Boolean = false
 
     fun onFragmentVisible() {
+        Log.d("MessageViewModel", "onFragmentVisible")
         _isVisible = true
     }
 
     fun onFragmentHidden() {
+        Log.d("MessageViewModel", "onFragmentHidden")
         _isVisible = false
     }
 
@@ -71,35 +75,46 @@ class MessageViewModel @Inject constructor(
 
     fun setChatId(chatId: Long) {
         _chatId.value = chatId
+        markUnreadAsRead(chatId)
+    }
+
+    fun markUnreadAsRead(chatId: Long){
+        viewModelScope.launch {
+            chatRepository.markUnreadAsRead(chatId)
+        }
     }
 
     fun sendMessage(content: String) {
-        send(
-            Message(
-                content = content,
-                timestamp = DateTimeFormatter.ISO_INSTANT.format(Instant.now()).toString(),
-                chatId = _chatId.value!!,
-                isIncoming = false
-            )
-        )
-
-        // more info for generating photos and other content at https://ai.google.dev/api/generate-content#text
-        val generativeModel = GenerativeModel(
-            modelName = "gemini-2.0-flash",
-            apiKey = BuildConfig.API_KEY,
-            systemInstruction = content {
-                text("Please respond to this conversation like the meme ${chat.value!!.name}.")
-            }
-        )
-
         viewModelScope.launch {
+            chatRepository.sendMessage(
+                Message(
+                    content = content,
+                    timestamp = DateTimeFormatter.ISO_INSTANT.format(Instant.now()).toString(),
+                    chatId = _chatId.value!!,
+                    isIncoming = false
+                )
+            )
+
+            // more info for generating photos and other content at https://ai.google.dev/api/generate-content#text
+            val generativeModel = GenerativeModel(
+                modelName = "gemini-2.0-flash",
+                apiKey = BuildConfig.API_KEY,
+                systemInstruction = content {
+                    text("Please respond to this conversation like the meme ${chat.value!!.name}.")
+                }
+            )
+
             val messageList = chatRepository.getMessages(chat.value!!.id).asFlow().first()
             val chatContents = messageList.map { Content.Builder().text(it.content).build() }.toList()
 
             val chatBot = generativeModel.startChat(chatContents)
+
             val response = try {
-                chatBot.sendMessage(content).text ?: "..."
+                withContext(Dispatchers.IO){
+                    chatBot.sendMessage(content).text ?: "..."
+                }
             } catch (e: Exception) {
+                Log.d("MessageViewModel", "Generating reply")
                 e.printStackTrace()
                 e.message
             }
@@ -113,19 +128,17 @@ class MessageViewModel @Inject constructor(
                     isIncoming = true,
                     read = false
                 )
-                send(message)
+
+                val messageId = chatRepository.sendMessage(message)
+                message.id = messageId
+                if (!_isVisible)
+                    notifications.showNotification(message, chat.value!!)
             }
         }
     }
 
-    private fun send(message: Message) {
-        viewModelScope.launch {
-            val messageId = chatRepository.sendMessage(message)
-            message.id = messageId
-
-            if (!_isVisible)
-                notifications.showNotification(message, chat.value!!)
-        }
+    override fun onCleared() {
+        super.onCleared()
+        Log.d("MessageViewModel", "onCleared")
     }
-
 }

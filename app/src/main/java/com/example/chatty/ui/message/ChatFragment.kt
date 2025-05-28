@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -26,7 +27,7 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ChatFragment: Fragment() {
-    private val messageViewModel: MessageViewModel by viewModels()
+    private val messageViewModel: MessageViewModel by hiltNavGraphViewModels(R.id.nav_graph)
 
     companion object {
         private val TAG = ChatFragment::class.java.simpleName
