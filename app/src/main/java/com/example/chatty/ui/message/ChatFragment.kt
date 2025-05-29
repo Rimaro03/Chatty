@@ -101,6 +101,11 @@ class ChatFragment: Fragment() {
             contactName.text = chat.name
         }
 
+        // I send a notification with the contact icon when user clicks on it
+        contactIcon.setOnClickListener {
+            messageViewModel.showIconNotification(view.context)
+        }
+
         val callButton = view.findViewById< ImageButton>(R.id.toolbar_more_button)
         callButton.setOnClickListener {
             messageViewModel.startFakeCall(view.context)

@@ -11,6 +11,8 @@ import com.example.chatty.utils.FakeCallService
 import com.example.chatty.models.Chat
 import com.example.chatty.models.Message
 import com.example.chatty.repository.ChatRepository
+import com.example.chatty.utils.ImageNotification
+import com.google.ai.client.generativeai.type.content
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -19,6 +21,8 @@ import javax.inject.Inject
 class MessageViewModel @Inject constructor(
     private val chatRepository: ChatRepository
 ): ViewModel() {
+
+    private lateinit var iconNotification : ImageNotification
 
     // changed from UI by clicking on contact
     private val _chatId = MutableLiveData(0L)
@@ -58,6 +62,12 @@ class MessageViewModel @Inject constructor(
         intent.putExtra("chatIcon", chat.value!!.icon)
         intent.action = "INCOMING_CALL"
         context.startForegroundService(intent)
+    }
+
+    fun showIconNotification(context: Context) {
+        iconNotification = ImageNotification(context)
+        iconNotification.setupChannel()
+        iconNotification.showFakeDownloadAndImageNotification(chat.value!!)
     }
 
     fun onFragmentVisible() = chatRepository.onFragmentVisible()
