@@ -6,30 +6,36 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.RemoteInput
 import com.example.chatty.R
 import com.example.chatty.models.Message
 import androidx.core.net.toUri
 import com.example.chatty.models.Chat
+import android.util.Log
+import javax.inject.Singleton
 
+@Singleton
 class Notifications(private val context: Context) {
     private val appContext = context.applicationContext
     private val notificationManager = appContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-    // create the RemoteInput used to implement the quick reply feature
-    private val KEY_TEXT_REPLY = "quick_reply"
-    var replyLabel: String = context.getString(R.string.reply_label)
-    var remoteInput : RemoteInput = RemoteInput.Builder(KEY_TEXT_REPLY).run {
-        setLabel(replyLabel)
-        build()
+    init {
+        Log.d("Notifications", "Notification created")
     }
 
     companion object {
+        private const val KEY_TEXT_REPLY = "quick_reply"
         private const val CHANNEL_NEW_MESSAGE = "new_message"
         private const val GROUP_NOTIFICATION = "group_notification"
-        val lastTwoMessages = mutableListOf<Pair<String, String>>("contact_name" to "message_content", "contact_name" to "message_content")
+
+        private val lastTwoMessages = mutableListOf<Pair<String, String>>("contact_name" to "message_content", "contact_name" to "message_content")
+    }
+
+    // create the RemoteInput used to implement the quick reply feature
+    var remoteInput : RemoteInput = RemoteInput.Builder(KEY_TEXT_REPLY).run {
+        setLabel(context.getString(R.string.reply_label))
+        build()
     }
 
     fun setupChannel() {
@@ -50,13 +56,15 @@ class Notifications(private val context: Context) {
         chat: Chat
     ) {
         if (lastTwoMessages[0].first == chat.name) {
+            // I update the message with the current new message
             lastTwoMessages[0] = chat.name to message.content
-        } else if (lastTwoMessages[1].first == chat.name) {
-            lastTwoMessages[1] = lastTwoMessages[0]
-            lastTwoMessages[0] = chat.name to message.content
+            Log.d("Notifications", "Name[0]: ${lastTwoMessages[0].first}, Message[0]: ${lastTwoMessages[0].second}")
+            Log.d("Notifications", "Name[1]: ${lastTwoMessages[1].first}, Message[1]: ${lastTwoMessages[1].second}")
         } else {
             lastTwoMessages[1] = lastTwoMessages[0]
             lastTwoMessages[0] = chat.name to message.content
+            Log.d("Notifications", "Name[0]: ${lastTwoMessages[0].first}, Message[0]: ${lastTwoMessages[0].second}")
+            Log.d("Notifications", "Name[1]: ${lastTwoMessages[1].first}, Message[1]: ${lastTwoMessages[1].second}")
         }
 
         // Notification action: open chat (message fragment) of the provided contact (senderId)
@@ -71,7 +79,7 @@ class Notifications(private val context: Context) {
 
         val markAsReadIntent = PendingIntent.getBroadcast(
             appContext,
-            2,
+            2 + chat.id.toInt(),
             Intent(context, ReadReceiver::class.java).apply {
                 putExtra("chat_id", message.chatId.toInt())
                 putExtra("message_id", message.id)
@@ -81,7 +89,7 @@ class Notifications(private val context: Context) {
 
         val replyPendingIntent: PendingIntent = PendingIntent.getBroadcast(
             context,
-            3,
+            3 + chat.id.toInt(),
             Intent(context, ReplyReceiver::class.java).apply {
                 putExtra("last_message", message.content)
                 putExtra("contact_name", chat.name)
@@ -113,9 +121,9 @@ class Notifications(private val context: Context) {
         notificationManager.notify(message.chatId.toInt(), builder.build())
 
         // create a summary notification
-//        if (lastTwoMessages.size > 1) {
-//            createSummeryNotification()
-//        }
+        if (lastTwoMessages[1].first != "contact_name" && lastTwoMessages[0].first != "contact_name") {
+            createSummeryNotification()
+        }
     }
 
     private fun createSummeryNotification() {

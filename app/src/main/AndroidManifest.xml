@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"/>
 
     <application
         android:name=".ChattyApplication"
@@ -31,8 +33,13 @@
                 <data android:scheme="chatty" android:host="chat" />
             </intent-filter>
         </activity>
+        <service
+            android:name=".utils.FakeCallService"
+            android:exported="false"
+            android:foregroundServiceType="mediaPlayback"/>
         <receiver android:name=".utils.ReplyReceiver" />
         <receiver android:name=".utils.ReadReceiver" />
+        <receiver android:name=".utils.CallReceiver"/>
     </application>
 
 </manifest>
