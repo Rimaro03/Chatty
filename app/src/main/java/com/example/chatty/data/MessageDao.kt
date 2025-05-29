@@ -3,10 +3,8 @@ package com.example.chatty.data
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.chatty.models.Message
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MessageDao {
@@ -27,6 +25,9 @@ interface MessageDao {
 
     @Query("UPDATE Message SET read = 1 WHERE id = :messageId")
     suspend fun markAsRead(messageId: Long)
+
+    @Query("UPDATE Message SET read = 1 WHERE chatId = :chatId")
+    suspend fun markAllAsRead(chatId: Long)
 
     @Query("DELETE FROM Message")
     suspend fun deleteAll()

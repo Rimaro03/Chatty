@@ -1,15 +1,11 @@
 package com.example.chatty.repository
 
-import android.util.Log
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.liveData
 import com.example.chatty.data.ChatDao
 import com.example.chatty.data.MessageDao
 import com.example.chatty.models.Chat
 import com.example.chatty.models.ChatWithLastMessage
 import com.example.chatty.models.Message
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class ChatRepository @Inject constructor(
@@ -23,10 +19,10 @@ class ChatRepository @Inject constructor(
     fun getChat(chatId: Long) = chatDao.getById(chatId)
 
     // messages
+    suspend fun sendMessage(message: Message): Long = messageDao.insert(message)
     fun getMessages(chatId: Long): LiveData<List<Message>> = messageDao.getAllByChatId(chatId)
     suspend fun clearChatHistory(chatId: Long) = messageDao.deleteAllByChatId(chatId)
     suspend fun clearHistory() = messageDao.deleteAll()
     suspend fun markAsRead(messageId: Long) = messageDao.markAsRead(messageId)
-
-    suspend fun sendMessage(message: Message): Long = messageDao.insert(message)
+    suspend fun markAllAsRead(chatId: Long) = messageDao.markAllAsRead(chatId)
 }
