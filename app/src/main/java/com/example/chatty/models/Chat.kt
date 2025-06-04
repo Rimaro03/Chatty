@@ -8,5 +8,6 @@ data class Chat(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0L,
     val name: String,
-    val icon: Int
+    val icon: Int,
+    val audio: String
 )

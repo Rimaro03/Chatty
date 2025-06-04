@@ -79,7 +79,10 @@ class MessageViewModel @Inject constructor(
     fun onFragmentHidden() = chatRepository.onFragmentHidden()
 
     // PLAYER
-    fun play(url: String) = chatRepository.play(url)
-    fun stop() = chatRepository.stop()
+    fun playAudio() {
+        Log.d("MessageViewModel", "Playing ${chat!!.value.audio}")
+        chatRepository.play(chat!!.value.audio)
+    }
+    fun stopAudio() = chatRepository.stop()
     fun releasePlayer() = chatRepository.releasePlayer()
 }

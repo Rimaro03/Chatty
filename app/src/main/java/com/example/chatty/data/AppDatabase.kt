@@ -31,11 +31,13 @@ class DatabaseCallback(
         CoroutineScope(Dispatchers.IO).launch {
             chatDaoProvider.get().insert(Chat(
                 name = "Boneca Ambalabu",
-                icon = R.drawable.boneca
+                icon = R.drawable.boneca,
+                audio = "android.resource://com.example.chatty/${R.raw.boneca_ambalabu}"
             ))
             chatDaoProvider.get().insert(Chat(
                 name = "Bombardino Crocodilo",
-                icon = R.drawable.bombardino
+                icon = R.drawable.bombardino,
+                audio = "android.resource://com.example.chatty/${R.raw.bombardino_crocodilo}"
             ))
         }
     }

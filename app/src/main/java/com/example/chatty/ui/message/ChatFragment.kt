@@ -114,7 +114,7 @@ class ChatFragment: Fragment() {
 
         val mediaButton = view.findViewById<ImageButton>(R.id.toolbar_media_button)
         mediaButton.setOnClickListener {
-            messageViewModel.play("android.resource://com.example.chatty/${R.raw.cappuccino_assassino}")
+            messageViewModel.playAudio()
         }
     }
 

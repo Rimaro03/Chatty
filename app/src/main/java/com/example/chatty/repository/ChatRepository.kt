@@ -1,5 +1,6 @@
 package com.example.chatty.repository
 
+import android.app.Application
 import androidx.lifecycle.asFlow
 import com.example.chatty.BuildConfig
 import com.example.chatty.data.ChatDao
@@ -114,5 +115,8 @@ class ChatRepository @Inject constructor(
         playbackManager.stopPlayback()
     }
 
-    fun releasePlayer() = playbackManager.release()
+    fun releasePlayer() {
+        playbackManager.release()
+        Log.d("ChatRepository", "Player released")
+    }
 }

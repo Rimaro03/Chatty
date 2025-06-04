@@ -204,7 +204,7 @@ class Notifications @Inject constructor(
             .setStyle(MediaStyleNotificationHelper.MediaStyle(mediaSession)
                 .setShowActionsInCompactView(1 /* #1: pause button \*/))
             .setContentTitle("Now Playing")
-            .setContentText("Cappuccino Assassino")
+            .setContentText("Media Audio")
 
         notificationManager.notify(0, notification.build())
     }
