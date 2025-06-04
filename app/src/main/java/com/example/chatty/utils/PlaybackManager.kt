@@ -10,6 +10,9 @@ class PlaybackManager(private val context: Context, private val notifications: N
     // PLAYER
     private lateinit var player: ExoPlayer
     private lateinit var mediaSession: MediaSession
+    private var initialized: Boolean = false
+
+
 
     fun startPlayback(url: String) {
         player = ExoPlayer.Builder(context).build()
@@ -21,6 +24,7 @@ class PlaybackManager(private val context: Context, private val notifications: N
         mediaSession = MediaSession.Builder(context, player).build()
 
         notifications.createMediaNotification(player.isPlaying, mediaSession)
+        initialized = true
     }
 
     fun stopPlayback() {
@@ -28,6 +32,8 @@ class PlaybackManager(private val context: Context, private val notifications: N
     }
 
     fun release() {
+        if(!initialized)
+            return
         player.release()
         mediaSession.release()
     }
