@@ -1,6 +1,5 @@
 package com.example.chatty.repository
 
-import android.app.Application
 import androidx.lifecycle.asFlow
 import com.example.chatty.BuildConfig
 import com.example.chatty.data.ChatDao
@@ -23,11 +22,11 @@ import com.example.chatty.utils.PlaybackManager
 class ChatRepository @Inject constructor(
     private val messageDao: MessageDao,
     private val chatDao: ChatDao,
-    application: Application,
+    private val notifications: Notifications,
+    private val playbackManager: PlaybackManager
 ) {
     // chat
     private var _isVisible: Boolean = false
-    private val notifications : Notifications = Notifications(context = application.applicationContext)
 
     fun onFragmentVisible() {
         _isVisible = true
@@ -107,7 +106,6 @@ class ChatRepository @Inject constructor(
     suspend fun markAllAsRead(chatId: Long) = messageDao.markAllAsRead(chatId)
 
     // PLAYER
-    private val playbackManager = PlaybackManager(application.applicationContext, notifications)
     fun play(url: String) {
         playbackManager.startPlayback(url)
     }

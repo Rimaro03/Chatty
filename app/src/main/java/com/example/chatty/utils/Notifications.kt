@@ -1,5 +1,6 @@
 package com.example.chatty.utils
 
+import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -18,11 +19,14 @@ import androidx.annotation.OptIn
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaStyleNotificationHelper
 import com.example.chatty.MainActivity
+import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class Notifications(private val context: Context) {
-    private val appContext = context.applicationContext
+class Notifications @Inject constructor(
+    private val application: Application
+) {
+    private val appContext = application.applicationContext
     private val notificationManager = appContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
     init {
@@ -40,7 +44,7 @@ class Notifications(private val context: Context) {
 
     // create the RemoteInput used to implement the quick reply feature
     var remoteInput : RemoteInput = RemoteInput.Builder(KEY_TEXT_REPLY).run {
-        setLabel(context.getString(R.string.reply_label))
+        setLabel(application.getString(R.string.reply_label))
         build()
     }
 
@@ -87,7 +91,7 @@ class Notifications(private val context: Context) {
             appContext,
             1,
             Intent(Intent.ACTION_VIEW, "chatty://chat/${message.chatId}".toUri()).apply {
-                setPackage(context.packageName)
+                setPackage(application.packageName)
             },
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
@@ -95,7 +99,7 @@ class Notifications(private val context: Context) {
         val markAsReadIntent = PendingIntent.getBroadcast(
             appContext,
             2 + chat.id.toInt(),
-            Intent(context, ReadReceiver::class.java).apply {
+            Intent(application, ReadReceiver::class.java).apply {
                 putExtra("chat_id", message.chatId.toInt())
                 putExtra("message_id", message.id)
             },
@@ -103,9 +107,9 @@ class Notifications(private val context: Context) {
         )
 
         val replyPendingIntent: PendingIntent = PendingIntent.getBroadcast(
-            context,
+            application,
             3 + chat.id.toInt(),
-            Intent(context, ReplyReceiver::class.java).apply {
+            Intent(application, ReplyReceiver::class.java).apply {
                 putExtra("last_message", message.content)
                 putExtra("contact_name", chat.name)
                 putExtra("chat_id", message.chatId.toInt())
@@ -115,7 +119,7 @@ class Notifications(private val context: Context) {
 
         val builder = NotificationCompat.Builder(appContext, CHANNEL_NEW_MESSAGE)
             .setSmallIcon(R.drawable.ic_message)
-            .setLargeIcon(BitmapFactory.decodeResource(context.resources, chat.icon))   //this is needed for the big picture style
+            .setLargeIcon(BitmapFactory.decodeResource(application.resources, chat.icon))   //this is needed for the big picture style
             .setContentTitle(chat.name)
             .setContentText(message.content)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -158,44 +162,44 @@ class Notifications(private val context: Context) {
     @OptIn(UnstableApi::class)
     fun createMediaNotification(isPlaying: Boolean, mediaSession: MediaSession) {
         val playPauseAction = if (isPlaying) {
-            val intent = Intent(context, PlaybackManager::class.java).apply {
+            val intent = Intent(application, PlaybackManager::class.java).apply {
                 this.action = "pause"
             }
 
             NotificationCompat.Action(
                 android.R.drawable.ic_media_pause, "Pause",
-                PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+                PendingIntent.getService(application, 0, intent, PendingIntent.FLAG_IMMUTABLE)
             )
         } else {
-            val intent = Intent(context, PlaybackManager::class.java).apply {
+            val intent = Intent(application, PlaybackManager::class.java).apply {
                 this.action = "play"
             }
 
             NotificationCompat.Action(
                 android.R.drawable.ic_media_play, "Play",
-                PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+                PendingIntent.getService(application, 0, intent, PendingIntent.FLAG_IMMUTABLE)
             )
         }
 
-        val stopIntent = Intent(context, PlaybackManager::class.java).apply {
+        val stopIntent = Intent(application, PlaybackManager::class.java).apply {
             this.action = "stop"
         }
 
         val stopAction = NotificationCompat.Action(
             android.R.drawable.ic_menu_close_clear_cancel, "Stop",
-            PendingIntent.getService(context, 0, stopIntent, PendingIntent.FLAG_IMMUTABLE)
+            PendingIntent.getService(application, 0, stopIntent, PendingIntent.FLAG_IMMUTABLE)
         )
 
-        val mainActivityIntent = Intent(context, MainActivity::class.java)
+        val mainActivityIntent = Intent(application, MainActivity::class.java)
 
-        val notification = NotificationCompat.Builder(context, CHANNEL_MEDIA)
+        val notification = NotificationCompat.Builder(application, CHANNEL_MEDIA)
             // Show controls on lock screen even when user hides sensitive content.
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setSmallIcon(R.drawable.music_note_icon)
             // Add media control buttons that invoke intents in your media service
             .addAction(playPauseAction)
             .addAction(stopAction)
-            .setContentIntent(PendingIntent.getActivity(context, 0, mainActivityIntent, PendingIntent.FLAG_IMMUTABLE))
+            .setContentIntent(PendingIntent.getActivity(application, 0, mainActivityIntent, PendingIntent.FLAG_IMMUTABLE))
             // Apply the media style template.
             .setStyle(MediaStyleNotificationHelper.MediaStyle(mediaSession)
                 .setShowActionsInCompactView(1 /* #1: pause button \*/))

@@ -1,30 +1,34 @@
 package com.example.chatty.utils
 
-import android.content.Context
+import android.app.Application
+import android.util.Log
 import androidx.core.net.toUri
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class PlaybackManager(private val context: Context, private val notifications: Notifications) {
-    // PLAYER
-    private lateinit var player: ExoPlayer
+@Singleton
+class PlaybackManager @Inject constructor(
+    private val application: Application,
+    private val notifications: Notifications
+) {
+    private var player: ExoPlayer = ExoPlayer.Builder(application.applicationContext).build()
     private lateinit var mediaSession: MediaSession
-    private var initialized: Boolean = false
 
-
+    init {
+        Log.d("PlaybackManager", "PlaybackManager created")
+        mediaSession = MediaSession.Builder(application.applicationContext, player).build()
+    }
 
     fun startPlayback(url: String) {
-        player = ExoPlayer.Builder(context).build()
         val mediaItem = MediaItem.fromUri(url.toUri())
         player.setMediaItem(mediaItem)
         player.prepare()
         player.play()
 
-        mediaSession = MediaSession.Builder(context, player).build()
-
         notifications.createMediaNotification(player.isPlaying, mediaSession)
-        initialized = true
     }
 
     fun stopPlayback() {
@@ -32,8 +36,6 @@ class PlaybackManager(private val context: Context, private val notifications: N
     }
 
     fun release() {
-        if(!initialized)
-            return
         player.release()
         mediaSession.release()
     }

@@ -2,6 +2,7 @@ package com.example.chatty.ui.message
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -20,6 +21,10 @@ import javax.inject.Inject
 class MessageViewModel @Inject constructor(
     private val chatRepository: ChatRepository,
 ): ViewModel() {
+
+    init {
+        Log.d("MessageViewModel", "MessageViewModel created")
+    }
 
     private lateinit var iconNotification : ImageNotification
 
