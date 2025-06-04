@@ -29,6 +29,7 @@ import kotlinx.coroutines.launch
 class ChatFragment: Fragment() {
     private val messageViewModel: MessageViewModel by hiltNavGraphViewModels(R.id.nav_graph)
 
+
     companion object {
         private val TAG = ChatFragment::class.java.simpleName
     }
@@ -106,10 +107,20 @@ class ChatFragment: Fragment() {
             messageViewModel.showIconNotification(view.context)
         }
 
-        val callButton = view.findViewById< ImageButton>(R.id.toolbar_more_button)
+        val callButton = view.findViewById< ImageButton>(R.id.toolbar_call_button)
         callButton.setOnClickListener {
             messageViewModel.startFakeCall(view.context)
         }
+
+        val mediaButton = view.findViewById<ImageButton>(R.id.toolbar_media_button)
+        mediaButton.setOnClickListener {
+            messageViewModel.play("android.resource://com.example.chatty/${R.raw.cappuccino_assassino}")
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        messageViewModel.releasePlayer()
     }
 
     override fun onPause() {

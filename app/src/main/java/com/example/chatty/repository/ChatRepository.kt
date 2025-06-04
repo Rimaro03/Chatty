@@ -18,6 +18,7 @@ import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 import android.util.Log
 import androidx.lifecycle.LiveData
+import com.example.chatty.utils.PlaybackManager
 
 class ChatRepository @Inject constructor(
     private val messageDao: MessageDao,
@@ -104,4 +105,16 @@ class ChatRepository @Inject constructor(
     }
     suspend fun markAsRead(messageId: Long) = messageDao.markAsRead(messageId)
     suspend fun markAllAsRead(chatId: Long) = messageDao.markAllAsRead(chatId)
+
+    // PLAYER
+    private val playbackManager = PlaybackManager(application.applicationContext, notifications)
+    fun play(url: String) {
+        playbackManager.startPlayback(url)
+    }
+
+    fun stop() {
+        playbackManager.stopPlayback()
+    }
+
+    fun releasePlayer() = playbackManager.release()
 }

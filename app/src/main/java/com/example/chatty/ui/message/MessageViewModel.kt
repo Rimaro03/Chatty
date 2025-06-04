@@ -12,14 +12,13 @@ import com.example.chatty.models.Chat
 import com.example.chatty.models.Message
 import com.example.chatty.repository.ChatRepository
 import com.example.chatty.utils.ImageNotification
-import com.google.ai.client.generativeai.type.content
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MessageViewModel @Inject constructor(
-    private val chatRepository: ChatRepository
+    private val chatRepository: ChatRepository,
 ): ViewModel() {
 
     private lateinit var iconNotification : ImageNotification
@@ -73,4 +72,9 @@ class MessageViewModel @Inject constructor(
     fun onFragmentVisible() = chatRepository.onFragmentVisible()
 
     fun onFragmentHidden() = chatRepository.onFragmentHidden()
+
+    // PLAYER
+    fun play(url: String) = chatRepository.play(url)
+    fun stop() = chatRepository.stop()
+    fun releasePlayer() = chatRepository.releasePlayer()
 }

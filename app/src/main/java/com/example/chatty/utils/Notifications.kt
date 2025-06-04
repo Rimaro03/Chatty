@@ -6,6 +6,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
+import androidx.media3.session.MediaSession
 import androidx.core.app.NotificationCompat
 import androidx.core.app.RemoteInput
 import com.example.chatty.R
@@ -13,6 +14,10 @@ import com.example.chatty.models.Message
 import androidx.core.net.toUri
 import com.example.chatty.models.Chat
 import android.util.Log
+import androidx.annotation.OptIn
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.session.MediaStyleNotificationHelper
+import com.example.chatty.MainActivity
 import javax.inject.Singleton
 
 @Singleton
@@ -28,6 +33,7 @@ class Notifications(private val context: Context) {
         private const val KEY_TEXT_REPLY = "quick_reply"
         private const val CHANNEL_NEW_MESSAGE = "new_message"
         private const val GROUP_NOTIFICATION = "group_notification"
+        private const val CHANNEL_MEDIA = "media"
 
         private val lastTwoMessages = mutableListOf<Pair<String, String>>("contact_name" to "message_content", "contact_name" to "message_content")
     }
@@ -47,6 +53,15 @@ class Notifications(private val context: Context) {
                 NotificationManager.IMPORTANCE_HIGH,
             ).apply {
                 description = "New message has arrived"
+            }
+        )
+        notificationManager.createNotificationChannel(
+            NotificationChannel(
+                CHANNEL_MEDIA,
+                "New Message",
+                NotificationManager.IMPORTANCE_LOW,
+            ).apply {
+                description = "Media Playing"
             }
         )
     }
@@ -138,5 +153,55 @@ class Notifications(private val context: Context) {
             .setGroupSummary(true)
 
         notificationManager.notify(0, summaryBuilder.build())
+    }
+
+    @OptIn(UnstableApi::class)
+    fun createMediaNotification(isPlaying: Boolean, mediaSession: MediaSession) {
+        val playPauseAction = if (isPlaying) {
+            val intent = Intent(context, PlaybackManager::class.java).apply {
+                this.action = "pause"
+            }
+
+            NotificationCompat.Action(
+                android.R.drawable.ic_media_pause, "Pause",
+                PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+            )
+        } else {
+            val intent = Intent(context, PlaybackManager::class.java).apply {
+                this.action = "play"
+            }
+
+            NotificationCompat.Action(
+                android.R.drawable.ic_media_play, "Play",
+                PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+            )
+        }
+
+        val stopIntent = Intent(context, PlaybackManager::class.java).apply {
+            this.action = "stop"
+        }
+
+        val stopAction = NotificationCompat.Action(
+            android.R.drawable.ic_menu_close_clear_cancel, "Stop",
+            PendingIntent.getService(context, 0, stopIntent, PendingIntent.FLAG_IMMUTABLE)
+        )
+
+        val mainActivityIntent = Intent(context, MainActivity::class.java)
+
+        val notification = NotificationCompat.Builder(context, CHANNEL_MEDIA)
+            // Show controls on lock screen even when user hides sensitive content.
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setSmallIcon(R.drawable.music_note_icon)
+            // Add media control buttons that invoke intents in your media service
+            .addAction(playPauseAction)
+            .addAction(stopAction)
+            .setContentIntent(PendingIntent.getActivity(context, 0, mainActivityIntent, PendingIntent.FLAG_IMMUTABLE))
+            // Apply the media style template.
+            .setStyle(MediaStyleNotificationHelper.MediaStyle(mediaSession)
+                .setShowActionsInCompactView(1 /* #1: pause button \*/))
+            .setContentTitle("Now Playing")
+            .setContentText("Cappuccino Assassino")
+
+        notificationManager.notify(0, notification.build())
     }
 }
