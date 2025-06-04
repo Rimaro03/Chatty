@@ -80,8 +80,8 @@ class MessageViewModel @Inject constructor(
 
     // PLAYER
     fun playAudio() {
-        Log.d("MessageViewModel", "Playing ${chat!!.value.audio}")
-        chatRepository.play(chat!!.value.audio)
+        Log.d("MessageViewModel", "Playing ${chat.value!!.audio}")
+        chatRepository.play(chat.value!!.audio)
     }
     fun stopAudio() = chatRepository.stop()
     fun releasePlayer() = chatRepository.releasePlayer()
