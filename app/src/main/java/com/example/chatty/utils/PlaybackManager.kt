@@ -11,7 +11,7 @@ import javax.inject.Singleton
 
 @Singleton
 class PlaybackManager @Inject constructor(
-    private val application: Application,
+    application: Application,
     private val notifications: Notifications
 ) {
     private var player: ExoPlayer = ExoPlayer.Builder(application.applicationContext).build()
