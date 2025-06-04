@@ -11,6 +11,8 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.Person
 import com.example.chatty.R
 import android.util.Log
+import android.os.VibrationEffect
+import android.os.Build
 
 class FakeCallService : Service() {
 
@@ -65,6 +67,10 @@ class FakeCallService : Service() {
     }
 
     fun setupChannel() {
+        val timings = longArrayOf(0, 100, 50, 100, 50, 100) // Custom vibration pattern
+        val amplitudes = intArrayOf(255, 0, 255, 0, 255, 0) // Custom amplitude pattern
+        val vibration : VibrationEffect = VibrationEffect.createWaveform(timings, amplitudes, 3)
+
         // Create the NotificationChannel.
         notificationManager.createNotificationChannel(
             NotificationChannel(
@@ -73,7 +79,11 @@ class FakeCallService : Service() {
                 NotificationManager.IMPORTANCE_HIGH,
             ).apply {
                 description = "Incoming call notification"
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM){
+                    setVibrationEffect(vibration)
+                }
             }
+
         )
     }
 
