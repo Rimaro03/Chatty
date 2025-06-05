@@ -118,11 +118,6 @@ class ChatFragment: Fragment() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        messageViewModel.releasePlayer()
-    }
-
     override fun onPause() {
         super.onPause()
         // Letting viewmodel know fragment is hidden

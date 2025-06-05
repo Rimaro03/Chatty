@@ -84,5 +84,9 @@ class MessageViewModel @Inject constructor(
         chatRepository.play(chat.value!!.audio)
     }
     fun stopAudio() = chatRepository.stop()
-    fun releasePlayer() = chatRepository.releasePlayer()
+
+    override fun onCleared() {
+        super.onCleared()
+        chatRepository.releasePlayer()
+    }
 }

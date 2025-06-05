@@ -15,12 +15,7 @@ class PlaybackManager @Inject constructor(
     private val notifications: Notifications
 ) {
     private var player: ExoPlayer = ExoPlayer.Builder(application.applicationContext).build()
-    private lateinit var mediaSession: MediaSession
-
-    init {
-        Log.d("PlaybackManager", "PlaybackManager created")
-        mediaSession = MediaSession.Builder(application.applicationContext, player).build()
-    }
+    private var mediaSession = MediaSession.Builder(application.applicationContext, player).build()
 
     fun startPlayback(url: String) {
         val mediaItem = MediaItem.fromUri(url.toUri())
@@ -36,6 +31,7 @@ class PlaybackManager @Inject constructor(
     }
 
     fun release() {
+        Log.d("PlaybackManager", "PlaybackManager released")
         player.release()
         mediaSession.release()
     }
