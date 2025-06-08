@@ -123,10 +123,4 @@ class ChatFragment: Fragment() {
         // Letting viewmodel know fragment is hidden
         messageViewModel.onFragmentHidden()
     }
-
-    override fun onResume() {
-        super.onResume()
-        // Letting viewmodel know fragment is hidden
-        messageViewModel.onFragmentVisible()
-    }
 }

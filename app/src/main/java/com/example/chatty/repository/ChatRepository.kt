@@ -27,18 +27,15 @@ class ChatRepository @Inject constructor(
     private val playbackManager: PlaybackManager
 ) {
     // chat
-    private var _isVisible: Boolean = false
-
-    fun onFragmentVisible() {
-        _isVisible = true
-    }
-
-    fun onFragmentHidden() {
-        _isVisible = false
-    }
+    var currentChatId: Long = 0L
 
     init {
         notifications.setupChannel()
+        currentChatId = 0L
+    }
+
+    fun onFragmentHidden() {
+        currentChatId = 0L
     }
 
     // chat
@@ -63,9 +60,6 @@ class ChatRepository @Inject constructor(
 
         val chat = getChat(message.chatId).asFlow().first()
 
-        Log.d ("ChatRepository", "Message sent: ${message.content}")
-        Log.d ("ChatRepository", "Chat ${chat.name} is visible: $_isVisible")
-
         val generativeModel = GenerativeModel(
             modelName = "gemini-2.0-flash",
             apiKey = BuildConfig.API_KEY,
@@ -85,7 +79,7 @@ class ChatRepository @Inject constructor(
             e.message
         }
 
-        kotlinx.coroutines.delay(1000)
+        kotlinx.coroutines.delay(5000)
         if (response != null) {
             val message = Message(
                 content = response,
@@ -98,7 +92,10 @@ class ChatRepository @Inject constructor(
             val messageId = messageDao.insert(message)
             message.id = messageId
             Log.d ("ChatRepository", "Message received: ${message.content}")
-            if (!_isVisible) {
+            if(message.chatId == currentChatId) {
+                messageDao.markAsRead(messageId)
+            }
+            else {
                 notifications.showNotification(message, chat)
             }
         }

@@ -43,6 +43,7 @@ class MessageViewModel @Inject constructor(
 
     fun setChatId(chatId: Long) {
         _chatId.value = chatId
+        chatRepository.currentChatId = chatId
         markAllAsRead(chatId)
     }
 
@@ -73,8 +74,6 @@ class MessageViewModel @Inject constructor(
         iconNotification.setupChannel()
         iconNotification.showFakeDownloadAndImageNotification(chat.value!!)
     }
-
-    fun onFragmentVisible() = chatRepository.onFragmentVisible()
 
     fun onFragmentHidden() = chatRepository.onFragmentHidden()
 
