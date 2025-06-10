@@ -79,7 +79,7 @@ class ChatRepository @Inject constructor(
             e.message
         }
 
-        kotlinx.coroutines.delay(5000)
+        kotlinx.coroutines.delay(2000)
         if (response != null) {
             val message = Message(
                 content = response,
@@ -97,6 +97,7 @@ class ChatRepository @Inject constructor(
             }
             else {
                 notifications.showNotification(message, chat)
+                notifications.showBubbleNotification(message, chat)
             }
         }
     }

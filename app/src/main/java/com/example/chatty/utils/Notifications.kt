@@ -1,12 +1,16 @@
 package com.example.chatty.utils
 
 import android.app.Application
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ShortcutInfo
+import android.content.pm.ShortcutManager
 import android.graphics.BitmapFactory
+import android.graphics.drawable.Icon
 import androidx.media3.session.MediaSession
 import androidx.core.app.NotificationCompat
 import androidx.core.app.RemoteInput
@@ -16,6 +20,8 @@ import androidx.core.net.toUri
 import com.example.chatty.models.Chat
 import android.util.Log
 import androidx.annotation.OptIn
+import androidx.core.app.Person
+import androidx.core.graphics.drawable.IconCompat
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaStyleNotificationHelper
 import com.example.chatty.MainActivity
@@ -38,6 +44,7 @@ class Notifications @Inject constructor(
         private const val CHANNEL_NEW_MESSAGE = "new_message"
         private const val GROUP_NOTIFICATION = "group_notification"
         private const val CHANNEL_MEDIA = "media"
+        private const val CHANNEL_BUBBLE = "bubble"
 
         private val lastTwoMessages = mutableListOf<Pair<String, String>>("contact_name" to "message_content", "contact_name" to "message_content")
     }
@@ -68,6 +75,16 @@ class Notifications @Inject constructor(
                 description = "Media Playing"
             }
         )
+        notificationManager.createNotificationChannel(
+            NotificationChannel(
+                CHANNEL_BUBBLE,
+                "New Message",
+                NotificationManager.IMPORTANCE_HIGH,
+            ).apply {
+                setAllowBubbles(true)
+            }
+        )
+
     }
 
     fun showNotification(
@@ -93,8 +110,10 @@ class Notifications @Inject constructor(
             Intent(Intent.ACTION_VIEW, "chatty://chat/${message.chatId}".toUri()).apply {
                 setPackage(application.packageName)
             },
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
-        )
+            //PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE,
+
+            )
 
         val markAsReadIntent = PendingIntent.getBroadcast(
             appContext,
@@ -117,6 +136,26 @@ class Notifications @Inject constructor(
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
         )
 
+        // bubble
+        /*val chatPartner = Person.Builder()
+            .setName("Chat Partner")
+            .setImportant(true)
+            .build()
+
+        val shortcutID = "XYZ"
+        val shortcut = ShortcutInfo.Builder(appContext, shortcutID)
+            .setIntent(Intent(Intent.ACTION_VIEW))
+            .setShortLabel(chatPartner.name!!)
+            .setLongLived(true)
+            .build()
+        appContext.getSystemService(ShortcutManager::class.java)?.pushDynamicShortcut(shortcut)
+
+        val bubbleMetadata = NotificationCompat.BubbleMetadata.Builder(
+            pendingIntent,
+            IconCompat.createWithResource(appContext, R.drawable.boneca)
+        ).setDesiredHeight(600)
+            .build()*/
+
         val builder = NotificationCompat.Builder(appContext, CHANNEL_NEW_MESSAGE)
             .setSmallIcon(R.drawable.ic_message)
             .setLargeIcon(BitmapFactory.decodeResource(application.resources, chat.icon))   //this is needed for the big picture style
@@ -135,6 +174,17 @@ class Notifications @Inject constructor(
             .addAction(R.drawable.boneca, "Mark as Read", markAsReadIntent) // mark the message as read
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setGroup(GROUP_NOTIFICATION)
+            // bubble
+            /*.setBubbleMetadata(bubbleMetadata)
+            .setShortcutId(shortcutID)
+            .addPerson(chatPartner)
+            .setCategory(Notification.CATEGORY_MESSAGE)
+            .setStyle(
+                NotificationCompat.MessagingStyle(chatPartner)
+                    .addMessage("Hello!", System.currentTimeMillis(), chatPartner)
+            )
+            .setWhen(System.currentTimeMillis())
+            .setShowWhen(true)*/
 
         // i change the notification id based on the chat that sent the notification
         notificationManager.notify(message.chatId.toInt(), builder.build())
@@ -207,5 +257,49 @@ class Notifications @Inject constructor(
             .setContentText("Media Audio")
 
         notificationManager.notify(0, notification.build())
+    }
+
+
+    fun showBubbleNotification(message: Message, chat: Chat) {
+        val target = Intent(appContext, MainActivity::class.java)
+        val bubbleIntent = PendingIntent.getActivity(
+            appContext, 0, target, PendingIntent.FLAG_MUTABLE
+        )
+
+        val chatPartner = Person.Builder()
+            .setName(chat.name)
+            .setImportant(true)
+            .build()
+
+        val shortcutID = "Shortcut${chat.name}"
+        val shortcut = ShortcutInfo.Builder(appContext, shortcutID)
+            .setIntent(Intent(Intent.ACTION_VIEW))
+            .setShortLabel(chatPartner.name!!)
+            .setLongLived(true)
+            .build()
+        appContext.getSystemService(ShortcutManager::class.java)?.pushDynamicShortcut(shortcut)
+
+        val bubbleMetadata = NotificationCompat.BubbleMetadata.Builder(
+            bubbleIntent,
+            IconCompat.createWithResource(appContext, chat.icon)
+        ).setDesiredHeight(600)
+            .build()
+
+        val builder = NotificationCompat.Builder(appContext, CHANNEL_BUBBLE)
+            .setContentIntent(bubbleIntent)
+            .setSmallIcon(IconCompat.createWithResource(appContext, chat.icon))
+            .setBubbleMetadata(bubbleMetadata)
+            .setShortcutId(shortcutID)
+            .addPerson(chatPartner)
+            .setCategory(Notification.CATEGORY_MESSAGE)
+            .setStyle(
+                NotificationCompat.MessagingStyle(chatPartner)
+                    .addMessage(message.content, System.currentTimeMillis(), chatPartner)
+            )
+            .setAutoCancel(true)
+            .setWhen(System.currentTimeMillis())
+            .setShowWhen(true)
+
+        notificationManager.notify(chat.id.toInt() + 372814, builder.build())
     }
 }

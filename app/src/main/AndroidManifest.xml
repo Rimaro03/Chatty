@@ -21,8 +21,10 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:windowSoftInputMode="stateVisible|adjustResize">
-            <intent-filter>
+            android:windowSoftInputMode="stateVisible|adjustResize"
+            android:allowEmbedded="true"
+            android:resizeableActivity="true">
+        <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
