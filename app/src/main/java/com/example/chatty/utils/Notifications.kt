@@ -136,13 +136,17 @@ class Notifications @Inject constructor(
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
         )
 
-        // bubble
-        /*val chatPartner = Person.Builder()
-            .setName("Chat Partner")
+        val target = Intent(appContext, MainActivity::class.java)
+        val bubbleIntent = PendingIntent.getActivity(
+            appContext, 0, target, PendingIntent.FLAG_MUTABLE
+        )
+
+        val chatPartner = Person.Builder()
+            .setName(chat.name)
             .setImportant(true)
             .build()
 
-        val shortcutID = "XYZ"
+        val shortcutID = "Shortcut${chat.name}"
         val shortcut = ShortcutInfo.Builder(appContext, shortcutID)
             .setIntent(Intent(Intent.ACTION_VIEW))
             .setShortLabel(chatPartner.name!!)
@@ -151,10 +155,10 @@ class Notifications @Inject constructor(
         appContext.getSystemService(ShortcutManager::class.java)?.pushDynamicShortcut(shortcut)
 
         val bubbleMetadata = NotificationCompat.BubbleMetadata.Builder(
-            pendingIntent,
-            IconCompat.createWithResource(appContext, R.drawable.boneca)
+            bubbleIntent,
+            IconCompat.createWithResource(appContext, chat.icon)
         ).setDesiredHeight(600)
-            .build()*/
+            .build()
 
         val builder = NotificationCompat.Builder(appContext, CHANNEL_NEW_MESSAGE)
             .setSmallIcon(R.drawable.ic_message)
@@ -164,8 +168,10 @@ class Notifications @Inject constructor(
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(pendingIntent) // notification action
             .setAutoCancel(true) // destroy notification when clicked
-            .setStyle(NotificationCompat.BigTextStyle()
-                .bigText(message.content))  // the notification is now expandable
+            .setStyle(
+                NotificationCompat.MessagingStyle(chatPartner)
+                    .addMessage(message.content, System.currentTimeMillis(), chatPartner)
+            )
             .addAction(NotificationCompat.Action.Builder(
                 R.drawable.ic_message,
                 "Reply",
@@ -174,17 +180,12 @@ class Notifications @Inject constructor(
             .addAction(R.drawable.boneca, "Mark as Read", markAsReadIntent) // mark the message as read
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setGroup(GROUP_NOTIFICATION)
-            // bubble
-            /*.setBubbleMetadata(bubbleMetadata)
+            .setBubbleMetadata(bubbleMetadata)
             .setShortcutId(shortcutID)
             .addPerson(chatPartner)
             .setCategory(Notification.CATEGORY_MESSAGE)
-            .setStyle(
-                NotificationCompat.MessagingStyle(chatPartner)
-                    .addMessage("Hello!", System.currentTimeMillis(), chatPartner)
-            )
             .setWhen(System.currentTimeMillis())
-            .setShowWhen(true)*/
+            .setShowWhen(true)
 
         // i change the notification id based on the chat that sent the notification
         notificationManager.notify(message.chatId.toInt(), builder.build())
@@ -257,49 +258,5 @@ class Notifications @Inject constructor(
             .setContentText("Media Audio")
 
         notificationManager.notify(0, notification.build())
-    }
-
-
-    fun showBubbleNotification(message: Message, chat: Chat) {
-        val target = Intent(appContext, MainActivity::class.java)
-        val bubbleIntent = PendingIntent.getActivity(
-            appContext, 0, target, PendingIntent.FLAG_MUTABLE
-        )
-
-        val chatPartner = Person.Builder()
-            .setName(chat.name)
-            .setImportant(true)
-            .build()
-
-        val shortcutID = "Shortcut${chat.name}"
-        val shortcut = ShortcutInfo.Builder(appContext, shortcutID)
-            .setIntent(Intent(Intent.ACTION_VIEW))
-            .setShortLabel(chatPartner.name!!)
-            .setLongLived(true)
-            .build()
-        appContext.getSystemService(ShortcutManager::class.java)?.pushDynamicShortcut(shortcut)
-
-        val bubbleMetadata = NotificationCompat.BubbleMetadata.Builder(
-            bubbleIntent,
-            IconCompat.createWithResource(appContext, chat.icon)
-        ).setDesiredHeight(600)
-            .build()
-
-        val builder = NotificationCompat.Builder(appContext, CHANNEL_BUBBLE)
-            .setContentIntent(bubbleIntent)
-            .setSmallIcon(IconCompat.createWithResource(appContext, chat.icon))
-            .setBubbleMetadata(bubbleMetadata)
-            .setShortcutId(shortcutID)
-            .addPerson(chatPartner)
-            .setCategory(Notification.CATEGORY_MESSAGE)
-            .setStyle(
-                NotificationCompat.MessagingStyle(chatPartner)
-                    .addMessage(message.content, System.currentTimeMillis(), chatPartner)
-            )
-            .setAutoCancel(true)
-            .setWhen(System.currentTimeMillis())
-            .setShowWhen(true)
-
-        notificationManager.notify(chat.id.toInt() + 372814, builder.build())
     }
 }

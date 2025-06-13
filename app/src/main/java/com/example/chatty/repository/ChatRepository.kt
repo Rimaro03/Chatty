@@ -97,7 +97,7 @@ class ChatRepository @Inject constructor(
             }
             else {
                 notifications.showNotification(message, chat)
-                notifications.showBubbleNotification(message, chat)
+                //notifications.showBubbleNotification(message, chat)
             }
         }
     }
