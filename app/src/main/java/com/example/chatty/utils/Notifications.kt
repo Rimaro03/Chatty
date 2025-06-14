@@ -10,7 +10,6 @@ import android.content.Intent
 import android.content.pm.ShortcutInfo
 import android.content.pm.ShortcutManager
 import android.graphics.BitmapFactory
-import android.graphics.drawable.Icon
 import androidx.media3.session.MediaSession
 import androidx.core.app.NotificationCompat
 import androidx.core.app.RemoteInput
@@ -24,6 +23,7 @@ import androidx.core.app.Person
 import androidx.core.graphics.drawable.IconCompat
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaStyleNotificationHelper
+import com.example.chatty.BubbleActivity
 import com.example.chatty.MainActivity
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -110,10 +110,7 @@ class Notifications @Inject constructor(
             Intent(Intent.ACTION_VIEW, "chatty://chat/${message.chatId}".toUri()).apply {
                 setPackage(application.packageName)
             },
-            //PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE,
-
-            )
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE )
 
         val markAsReadIntent = PendingIntent.getBroadcast(
             appContext,
@@ -136,7 +133,13 @@ class Notifications @Inject constructor(
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
         )
 
-        val target = Intent(appContext, MainActivity::class.java)
+        // BUBBLE
+        val target = Intent(appContext, BubbleActivity::class.java).apply {
+            setPackage(application.packageName)
+            putExtra("contactId", message.chatId)
+            action = Intent.ACTION_VIEW
+        }
+
         val bubbleIntent = PendingIntent.getActivity(
             appContext, 0, target, PendingIntent.FLAG_MUTABLE
         )
@@ -146,9 +149,9 @@ class Notifications @Inject constructor(
             .setImportant(true)
             .build()
 
-        val shortcutID = "Shortcut${chat.name}"
+        val shortcutID = "Shortcut ${chat.name}"
         val shortcut = ShortcutInfo.Builder(appContext, shortcutID)
-            .setIntent(Intent(Intent.ACTION_VIEW))
+            .setIntent(target)
             .setShortLabel(chatPartner.name!!)
             .setLongLived(true)
             .build()
@@ -158,6 +161,8 @@ class Notifications @Inject constructor(
             bubbleIntent,
             IconCompat.createWithResource(appContext, chat.icon)
         ).setDesiredHeight(600)
+            .setAutoExpandBubble(true)
+            .setSuppressNotification(true)
             .build()
 
         val builder = NotificationCompat.Builder(appContext, CHANNEL_NEW_MESSAGE)
@@ -176,8 +181,13 @@ class Notifications @Inject constructor(
                 R.drawable.ic_message,
                 "Reply",
                 replyPendingIntent
-            ).addRemoteInput(remoteInput).build())  // add the reply action
-            .addAction(R.drawable.boneca, "Mark as Read", markAsReadIntent) // mark the message as read
+            )
+                .addRemoteInput(remoteInput).build())  // add the reply action
+            .addAction(
+                R.drawable.boneca,
+                "Mark as Read",
+                markAsReadIntent
+            ) // mark the message as read
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setGroup(GROUP_NOTIFICATION)
             .setBubbleMetadata(bubbleMetadata)

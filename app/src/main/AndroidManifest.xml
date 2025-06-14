@@ -24,7 +24,7 @@
             android:windowSoftInputMode="stateVisible|adjustResize"
             android:allowEmbedded="true"
             android:resizeableActivity="true">
-        <intent-filter>
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
@@ -32,8 +32,15 @@
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
-                <data android:scheme="chatty" android:host="chat" />
+                <data
+                    android:scheme="chatty"
+                    android:host="chat" />
             </intent-filter>
+        </activity>
+        <activity android:name=".BubbleActivity"
+            android:excludeFromRecents="true"
+            android:taskAffinity=""
+            android:launchMode="singleTask">
         </activity>
         <service
             android:name=".utils.FakeCallService"

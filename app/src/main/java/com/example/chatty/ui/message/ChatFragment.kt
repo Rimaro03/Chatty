@@ -15,7 +15,7 @@ import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatty.R
@@ -29,7 +29,6 @@ import kotlinx.coroutines.launch
 class ChatFragment: Fragment() {
     private val messageViewModel: MessageViewModel by hiltNavGraphViewModels(R.id.nav_graph)
 
-
     companion object {
         private val TAG = ChatFragment::class.java.simpleName
     }
@@ -42,7 +41,7 @@ class ChatFragment: Fragment() {
         // get contact id from HomeFragment
         val contactId = arguments?.getString("contactId")?.toLong()
         if(contactId == null) {
-            Log.e(TAG, "Couldn't fetch contactId from HomeFragment")
+            Log.e(TAG, "Couldn't fetch contactId")
             requireActivity().finishAndRemoveTask()
             return null
         }
@@ -56,10 +55,12 @@ class ChatFragment: Fragment() {
         (requireActivity() as AppCompatActivity).setSupportActionBar(toolBar)
 
         // Bind navcontroller to toolbar for back button
-        val navController = findNavController()
-        toolBar.setNavigationIcon(R.drawable.arrow_back)
-        toolBar.setNavigationOnClickListener {
-            navController.navigateUp()
+        val navController = NavHostFragment.findNavController(this)
+        if(navController.graph.startDestinationId != 0) {
+            toolBar.setNavigationIcon(R.drawable.arrow_back)
+            toolBar.setNavigationOnClickListener {
+                navController.navigateUp()
+            }
         }
 
         return view
