@@ -71,7 +71,6 @@ class MessageViewModel @Inject constructor(
 
     fun showIconNotification(context: Context) {
         iconNotification = ImageNotification(context)
-        iconNotification.setupChannel()
         iconNotification.showFakeDownloadAndImageNotification(chat.value!!)
     }
 

@@ -10,6 +10,8 @@ import android.content.Intent
 import android.content.pm.ShortcutInfo
 import android.content.pm.ShortcutManager
 import android.graphics.BitmapFactory
+import android.os.Build
+import android.os.VibrationEffect
 import androidx.media3.session.MediaSession
 import androidx.core.app.NotificationCompat
 import androidx.core.app.RemoteInput
@@ -44,7 +46,8 @@ class Notifications @Inject constructor(
         private const val CHANNEL_NEW_MESSAGE = "new_message"
         private const val GROUP_NOTIFICATION = "group_notification"
         private const val CHANNEL_MEDIA = "media"
-        private const val CHANNEL_BUBBLE = "bubble"
+        private const val CHANNEL_IMAGE = "Profile_Image"
+        private const val CHANNEL_CALL = "call_notification"
 
         private val lastTwoMessages = mutableListOf<Pair<String, String>>("contact_name" to "message_content", "contact_name" to "message_content")
     }
@@ -56,7 +59,7 @@ class Notifications @Inject constructor(
     }
 
     fun setupChannel() {
-        // Create the NotificationChannel.
+        // message channel
         notificationManager.createNotificationChannel(
             NotificationChannel(
                 CHANNEL_NEW_MESSAGE,
@@ -67,22 +70,44 @@ class Notifications @Inject constructor(
                 setAllowBubbles(true)
             }
         )
+
+        // media channel
         notificationManager.createNotificationChannel(
             NotificationChannel(
                 CHANNEL_MEDIA,
-                "New Message",
+                "Playback manager",
                 NotificationManager.IMPORTANCE_LOW,
             ).apply {
                 description = "Media Playing"
             }
         )
+
+        // call channel
+        val timings = longArrayOf(0, 100, 50, 100, 50, 100) // Custom vibration pattern
+        val amplitudes = intArrayOf(255, 0, 255, 0, 255, 0) // Custom amplitude pattern
+        val vibration : VibrationEffect = VibrationEffect.createWaveform(timings, amplitudes, 3)
         notificationManager.createNotificationChannel(
             NotificationChannel(
-                CHANNEL_BUBBLE,
-                "New Message",
+                CHANNEL_CALL,
+                "Incoming Call",
                 NotificationManager.IMPORTANCE_HIGH,
             ).apply {
-                setAllowBubbles(true)
+                description = "Incoming call notification"
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM){
+                    setVibrationEffect(vibration)
+                }
+            }
+
+        )
+
+        // download channel
+        notificationManager.createNotificationChannel(
+            NotificationChannel(
+                CHANNEL_IMAGE,
+                "Profile Image",
+                NotificationManager.IMPORTANCE_LOW,
+            ).apply {
+                description = "Shows the profile image of the contact"
             }
         )
 
@@ -205,7 +230,7 @@ class Notifications @Inject constructor(
             .setShowWhen(true)
 
         // i change the notification id based on the chat that sent the notification
-        notificationManager.notify(message.chatId.toInt(), builder.build())
+        notificationManager.notify(message.chatId.toInt()+10, builder.build())
 
         // create a summary notification
         if (lastTwoMessages[1].first != "contact_name" && lastTwoMessages[0].first != "contact_name") {
@@ -274,6 +299,6 @@ class Notifications @Inject constructor(
             .setContentTitle("Now Playing")
             .setContentText("Media Audio")
 
-        notificationManager.notify(0, notification.build())
+        notificationManager.notify(1, notification.build())
     }
 }

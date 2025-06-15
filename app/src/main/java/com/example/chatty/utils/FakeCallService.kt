@@ -27,8 +27,6 @@ class FakeCallService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
-        Log.d("FakeCallService", "Service started")
-
         // take the chat from the intent
         id = intent?.getLongExtra("chatId", 0L)!!
 
@@ -37,18 +35,14 @@ class FakeCallService : Service() {
             .setIcon(androidx.core.graphics.drawable.IconCompat.createWithResource(appContext, intent.getIntExtra("chatIcon", R.drawable.boneca)))
             .build()
 
-        setupChannel()
-
         when (intent.action) {
             "INCOMING_CALL" -> {
-                Log.d("FakeCallService", "Incoming call from ${person.name}")
                 // i set the id to 1 + chat.id to avoid conflict with the notification id
-                startForeground(id.toInt() + 1, createIncomingNotification())
+                startForeground(4, createIncomingNotification())
             }
             "ONGOING_CALL" -> {
-                Log.d("FakeCallService", "Ongoing call with ${person.name}")
                 // i set the id to 1 + chat.id to avoid conflict with the notification id
-                startForeground(id.toInt() + 1, createOngoingNotification())
+                startForeground(4, createOngoingNotification())
             }
         }
 
@@ -64,27 +58,6 @@ class FakeCallService : Service() {
 
     companion object {
         private const val CHANNEL_CALL = "call_notification"
-    }
-
-    fun setupChannel() {
-        val timings = longArrayOf(0, 100, 50, 100, 50, 100) // Custom vibration pattern
-        val amplitudes = intArrayOf(255, 0, 255, 0, 255, 0) // Custom amplitude pattern
-        val vibration : VibrationEffect = VibrationEffect.createWaveform(timings, amplitudes, 3)
-
-        // Create the NotificationChannel.
-        notificationManager.createNotificationChannel(
-            NotificationChannel(
-                CHANNEL_CALL,
-                "Incoming Call",
-                NotificationManager.IMPORTANCE_HIGH,
-            ).apply {
-                description = "Incoming call notification"
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM){
-                    setVibrationEffect(vibration)
-                }
-            }
-
-        )
     }
 
     fun createIncomingNotification() : android.app.Notification {

@@ -60,22 +60,6 @@ class ReplyReceiver: BroadcastReceiver() {
             }
         }
 
-        NotificationManagerCompat.from(context).notify(chatId, repliedNotification)
-
-        /*
-        CoroutineScope(Dispatchers.IO).launch {
-            if (message != null) {
-                val chatId = intent.getIntExtra("chat_id", 0)
-                val newMessage = Message(
-                    content = message.toString(),
-                    chatId = chatId.toLong(),
-                    timestamp = DateTimeFormatter.ISO_INSTANT.format(Instant.now()).toString(),
-                    isIncoming = false
-                )
-                val notifications = Notifications(context)
-
-                chatRepository.sendMessage(newMessage, Notifications(context))
-            }
-        }*/
+        NotificationManagerCompat.from(context).notify(chatId+10, repliedNotification)
     }
 }

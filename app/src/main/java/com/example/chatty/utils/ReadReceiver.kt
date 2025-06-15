@@ -27,6 +27,6 @@ class ReadReceiver : BroadcastReceiver() {
             chatRepository.markAsRead(messageID)
         }
 
-        NotificationManagerCompat.from(context).cancel(chatId)
+        NotificationManagerCompat.from(context).cancel(chatId+10)
     }
 }
