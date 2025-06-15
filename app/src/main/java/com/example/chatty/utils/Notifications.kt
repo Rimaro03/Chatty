@@ -141,7 +141,7 @@ class Notifications @Inject constructor(
         }
 
         val bubbleIntent = PendingIntent.getActivity(
-            appContext, 0, target, PendingIntent.FLAG_MUTABLE
+            appContext, chat.id.toInt(), target, PendingIntent.FLAG_MUTABLE
         )
 
         val chatPartner = Person.Builder()
@@ -184,7 +184,7 @@ class Notifications @Inject constructor(
             )
                 .addRemoteInput(remoteInput).build())  // add the reply action
             .addAction(
-                R.drawable.boneca,
+                R.drawable.ic_message,
                 "Mark as Read",
                 markAsReadIntent
             ) // mark the message as read
