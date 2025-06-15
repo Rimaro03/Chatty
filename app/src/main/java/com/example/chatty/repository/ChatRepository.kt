@@ -105,8 +105,8 @@ class ChatRepository @Inject constructor(
     suspend fun markAllAsRead(chatId: Long) = messageDao.markAllAsRead(chatId)
 
     // PLAYER
-    fun play(url: String) {
-        playbackManager.startPlayback(url)
+    fun play(chat: Chat) {
+        playbackManager.startPlayback(chat)
     }
 
     fun stop() {
