@@ -64,6 +64,7 @@ class Notifications @Inject constructor(
                 NotificationManager.IMPORTANCE_HIGH,
             ).apply {
                 description = "New message has arrived"
+                setAllowBubbles(true)
             }
         )
         notificationManager.createNotificationChannel(
@@ -149,11 +150,17 @@ class Notifications @Inject constructor(
             .setImportant(true)
             .build()
 
-        val shortcutID = "Shortcut ${chat.name}"
+        val shortcutID = "chat_${chat.id}"
+        val shortcutPerson = android.app.Person.Builder()
+            .setName(chat.name)
+            .setImportant(true)
+            .build()
+
         val shortcut = ShortcutInfo.Builder(appContext, shortcutID)
             .setIntent(target)
             .setShortLabel(chatPartner.name!!)
             .setLongLived(true)
+            .setPerson(shortcutPerson)
             .build()
         appContext.getSystemService(ShortcutManager::class.java)?.pushDynamicShortcut(shortcut)
 

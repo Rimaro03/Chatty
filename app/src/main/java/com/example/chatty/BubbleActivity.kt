@@ -1,6 +1,7 @@
 package com.example.chatty
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -27,4 +28,5 @@ class BubbleActivity: AppCompatActivity() {
         val uri = "chatty://chat/$contactId".toUri()
         navController.navigate(uri)
     }
+
 }
