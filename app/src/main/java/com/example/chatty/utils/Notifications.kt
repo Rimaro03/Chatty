@@ -139,6 +139,7 @@ class Notifications @Inject constructor(
             setPackage(application.packageName)
             putExtra("contactId", message.chatId)
             action = Intent.ACTION_VIEW
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
         }
 
         val bubbleIntent = PendingIntent.getActivity(

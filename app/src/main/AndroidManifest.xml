@@ -40,7 +40,7 @@
         <activity android:name=".BubbleActivity"
             android:excludeFromRecents="true"
             android:taskAffinity=""
-            android:launchMode="singleTask">
+            android:launchMode="singleTop">
         </activity>
         <service
             android:name=".utils.FakeCallService"
