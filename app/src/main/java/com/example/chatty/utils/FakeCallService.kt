@@ -1,18 +1,14 @@
 package com.example.chatty.utils
 
-import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
-import android.content.Context
 import android.content.Intent
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import androidx.core.app.Person
 import com.example.chatty.R
 import android.util.Log
-import android.os.VibrationEffect
-import android.os.Build
 
 class FakeCallService : Service() {
 
