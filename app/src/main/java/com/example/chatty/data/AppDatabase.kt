@@ -35,9 +35,19 @@ class DatabaseCallback(
                 audio = "android.resource://com.example.chatty/${R.raw.boneca_ambalabu}"
             ))
             chatDaoProvider.get().insert(Chat(
-                name = "Bombardino Crocodilo",
-                icon = R.drawable.bombardino,
-                audio = "android.resource://com.example.chatty/${R.raw.bombardino_crocodilo}"
+                name = "Cappuccino Assassino",
+                icon = R.drawable.cappuccino,
+                audio = "android.resource://com.example.chatty/${R.raw.cappuccino_assassino}"
+            ))
+            chatDaoProvider.get().insert(Chat(
+                name = "Brr Brr Patapim",
+                icon = R.drawable.patapim,
+                audio = "android.resource://com.example.chatty/${R.raw.brr_brr_patapim}"
+            ))
+            chatDaoProvider.get().insert(Chat(
+                name = "Lirilì Larilà",
+                icon = R.drawable.lirili,
+                audio = "android.resource://com.example.chatty/${R.raw.lirili_larila}"
             ))
         }
     }
