@@ -1,6 +1,7 @@
 package com.example.chatty
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -13,6 +14,10 @@ class BubbleActivity: AppCompatActivity() {
         setContentView(R.layout.activity_bubble)
 
         val contactId = intent.getLongExtra("contactId", 0)
+        if(contactId == 0L) {
+            Log.e("BubbleNotification", "contactId is zero!");
+            finish()
+        }
         title = "Chatty"
 
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment
