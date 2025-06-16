@@ -17,6 +17,8 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.Person
 import androidx.core.app.RemoteInput
+import androidx.core.content.pm.ShortcutInfoCompat
+import androidx.core.content.pm.ShortcutManagerCompat
 import androidx.core.graphics.drawable.IconCompat
 import androidx.core.net.toUri
 import com.example.chatty.BubbleActivity
@@ -180,19 +182,14 @@ class Notifications @Inject constructor(
             .build()
 
         val shortcutID = "chat_${chat.id}"
-        val shortcutPerson = android.app.Person.Builder()
-            .setName(chat.name)
-            .setIcon(Icon.createWithResource(appContext, chat.icon))
-            .setImportant(true)
-            .build()
-
-        val shortcut = ShortcutInfo.Builder(appContext, shortcutID)
+        val shortcut = ShortcutInfoCompat.Builder(appContext, shortcutID)
             .setIntent(target)
             .setShortLabel(chatPartner.name!!)
             .setLongLived(true)
-            .setPerson(shortcutPerson)
+            .setPerson(chatPartner)
+            .setIcon(IconCompat.createWithResource(appContext, chat.icon))
             .build()
-        appContext.getSystemService(ShortcutManager::class.java)?.pushDynamicShortcut(shortcut)
+        ShortcutManagerCompat.pushDynamicShortcut(appContext, shortcut)
 
         val bubbleMetadata = NotificationCompat.BubbleMetadata.Builder(
             bubbleIntent,
@@ -200,6 +197,7 @@ class Notifications @Inject constructor(
         ).setDesiredHeight(600)
             .setAutoExpandBubble(true)
             .setSuppressNotification(true)
+            .setIcon(IconCompat.createWithResource(appContext, chat.icon))
             .build()
 
         val builder = NotificationCompat.Builder(appContext, CHANNEL_NEW_MESSAGE)
