@@ -1,6 +1,5 @@
 package com.example.chatty.repository
 
-import android.app.Application
 import androidx.lifecycle.asFlow
 import com.example.chatty.BuildConfig
 import com.example.chatty.data.ChatDao
@@ -8,7 +7,7 @@ import com.example.chatty.data.MessageDao
 import com.example.chatty.models.Chat
 import com.example.chatty.models.ChatWithLastMessage
 import com.example.chatty.models.Message
-import com.example.chatty.utils.Notifications
+import com.example.chatty.notifications.Notifications
 import com.google.ai.client.generativeai.GenerativeModel
 import com.google.ai.client.generativeai.type.Content
 import com.google.ai.client.generativeai.type.content

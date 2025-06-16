@@ -12,7 +12,7 @@ import com.example.chatty.utils.FakeCallService
 import com.example.chatty.models.Chat
 import com.example.chatty.models.Message
 import com.example.chatty.repository.ChatRepository
-import com.example.chatty.utils.ImageNotification
+import com.example.chatty.notifications.ImageNotification
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -20,13 +20,12 @@ import javax.inject.Inject
 @HiltViewModel
 class MessageViewModel @Inject constructor(
     private val chatRepository: ChatRepository,
+    private val iconNotification: ImageNotification
 ): ViewModel() {
 
     init {
         Log.d("MessageViewModel", "MessageViewModel created")
     }
-
-    private lateinit var iconNotification : ImageNotification
 
     // changed from UI by clicking on contact
     private val _chatId = MutableLiveData(0L)
@@ -53,7 +52,6 @@ class MessageViewModel @Inject constructor(
         }
     }
 
-    // TODO: change _chat.value!! with a check for null
     fun sendMessage(content: String) {
         viewModelScope.launch {
             chatRepository.sendMessage(content, _chatId.value!!)
@@ -70,7 +68,6 @@ class MessageViewModel @Inject constructor(
     }
 
     fun showIconNotification(context: Context) {
-        iconNotification = ImageNotification(context)
         iconNotification.showFakeDownloadAndImageNotification(chat.value!!)
     }
 
@@ -86,5 +83,7 @@ class MessageViewModel @Inject constructor(
     override fun onCleared() {
         super.onCleared()
         chatRepository.releasePlayer()
+
+        Log.d("MessageViewModel", "MessageViewModel destroyed")
     }
 }

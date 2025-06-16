@@ -1,5 +1,6 @@
-package com.example.chatty.utils
+package com.example.chatty.notifications
 
+import android.app.Application
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
@@ -14,9 +15,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ImageNotification (private val context: Context) {
-    private val appContext = context.applicationContext
+class ImageNotification @Inject constructor(
+    private val application: Application
+) {
+    private val appContext = application.applicationContext
     private val notificationManager = appContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
     companion object {
@@ -31,19 +35,20 @@ class ImageNotification (private val context: Context) {
             appContext,
             1,
             Intent(Intent.ACTION_VIEW, "chatty://chat/${chat.id}".toUri()).apply {
-                setPackage(context.packageName)
+                setPackage(application.packageName)
             },
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
 
         val builder = NotificationCompat.Builder(appContext, CHANNEL_IMAGE)
             .setSmallIcon(R.drawable.ic_message)
-            .setLargeIcon(BitmapFactory.decodeResource(context.resources, chat.icon))   //this is needed for the big picture style
+            .setLargeIcon(BitmapFactory.decodeResource(appContext.resources, chat.icon))   //this is needed for the big picture style
             .setContentTitle(chat.name)
             .setContentIntent(pendingIntent) // notification action
             .setAutoCancel(true) // destroy notification when clicked
-            .setStyle(NotificationCompat.BigPictureStyle()
-                .bigPicture(BitmapFactory.decodeResource(context.resources, chat.icon))
+            .setStyle(
+                NotificationCompat.BigPictureStyle()
+                .bigPicture(BitmapFactory.decodeResource(appContext.resources, chat.icon))
                 .bigLargeIcon(null as Bitmap?)
             )
 

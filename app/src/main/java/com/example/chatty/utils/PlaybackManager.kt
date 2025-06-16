@@ -6,13 +6,15 @@ import androidx.core.net.toUri
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
+import com.example.chatty.notifications.MediaNotification
+import com.example.chatty.notifications.Notifications
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class PlaybackManager @Inject constructor(
     application: Application,
-    private val notifications: Notifications
+    private val mediaNotification: MediaNotification
 ) {
     private var player: ExoPlayer = ExoPlayer.Builder(application.applicationContext).build()
     private var mediaSession = MediaSession.Builder(application.applicationContext, player).build()
@@ -23,7 +25,7 @@ class PlaybackManager @Inject constructor(
         player.prepare()
         player.play()
 
-        notifications.createMediaNotification(player.isPlaying, mediaSession)
+        mediaNotification.createMediaNotification(player.isPlaying, mediaSession)
     }
 
     fun stopPlayback() {

@@ -1,4 +1,4 @@
-package com.example.chatty.utils
+package com.example.chatty.notifications
 
 import android.app.Application
 import android.app.Notification
@@ -10,29 +10,27 @@ import android.content.Intent
 import android.content.pm.ShortcutInfo
 import android.content.pm.ShortcutManager
 import android.graphics.BitmapFactory
+import android.graphics.drawable.Icon
 import android.os.Build
 import android.os.VibrationEffect
-import androidx.media3.session.MediaSession
-import androidx.core.app.NotificationCompat
-import androidx.core.app.RemoteInput
-import com.example.chatty.R
-import com.example.chatty.models.Message
-import androidx.core.net.toUri
-import com.example.chatty.models.Chat
 import android.util.Log
-import androidx.annotation.OptIn
+import androidx.core.app.NotificationCompat
 import androidx.core.app.Person
+import androidx.core.app.RemoteInput
 import androidx.core.graphics.drawable.IconCompat
-import androidx.media3.common.util.UnstableApi
-import androidx.media3.session.MediaStyleNotificationHelper
+import androidx.core.net.toUri
 import com.example.chatty.BubbleActivity
-import com.example.chatty.MainActivity
+import com.example.chatty.R
+import com.example.chatty.models.Chat
+import com.example.chatty.models.Message
+import com.example.chatty.utils.ReadReceiver
+import com.example.chatty.utils.ReplyReceiver
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class Notifications @Inject constructor(
-    private val application: Application
+    private val application: Application,
 ) {
     private val appContext = application.applicationContext
     private val notificationManager = appContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -135,8 +133,12 @@ class Notifications @Inject constructor(
             1,
             Intent(Intent.ACTION_VIEW, "chatty://chat/${message.chatId}".toUri()).apply {
                 setPackage(application.packageName)
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or
+                        Intent.FLAG_ACTIVITY_CLEAR_TOP or
+                        Intent.FLAG_ACTIVITY_SINGLE_TOP
             },
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE )
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
 
         val markAsReadIntent = PendingIntent.getBroadcast(
             appContext,
@@ -154,6 +156,7 @@ class Notifications @Inject constructor(
             Intent(application, ReplyReceiver::class.java).apply {
                 putExtra("last_message", message.content)
                 putExtra("contact_name", chat.name)
+                putExtra("contact_icon", chat.icon)
                 putExtra("chat_id", message.chatId.toInt())
             },
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
@@ -163,7 +166,7 @@ class Notifications @Inject constructor(
         val target = Intent(appContext, BubbleActivity::class.java).apply {
             setPackage(application.packageName)
             putExtra("contactId", message.chatId)
-            action = Intent.ACTION_VIEW
+            action= Intent.ACTION_VIEW
         }
 
         val bubbleIntent = PendingIntent.getActivity(
@@ -172,12 +175,14 @@ class Notifications @Inject constructor(
 
         val chatPartner = Person.Builder()
             .setName(chat.name)
+            .setIcon(IconCompat.createWithResource(appContext, chat.icon))
             .setImportant(true)
             .build()
 
         val shortcutID = "chat_${chat.id}"
         val shortcutPerson = android.app.Person.Builder()
             .setName(chat.name)
+            .setIcon(Icon.createWithResource(appContext, chat.icon))
             .setImportant(true)
             .build()
 
@@ -209,7 +214,8 @@ class Notifications @Inject constructor(
                 NotificationCompat.MessagingStyle(chatPartner)
                     .addMessage(message.content, System.currentTimeMillis(), chatPartner)
             )
-            .addAction(NotificationCompat.Action.Builder(
+            .addAction(
+                NotificationCompat.Action.Builder(
                 R.drawable.ic_message,
                 "Reply",
                 replyPendingIntent
@@ -242,7 +248,8 @@ class Notifications @Inject constructor(
         val summaryBuilder = NotificationCompat.Builder(appContext, CHANNEL_NEW_MESSAGE)
             .setSmallIcon(R.drawable.ic_message)
             .setContentTitle("New messages")
-            .setStyle(NotificationCompat.InboxStyle()
+            .setStyle(
+                NotificationCompat.InboxStyle()
                 .addLine("${lastTwoMessages[0].first}: ${lastTwoMessages[0].second}")
                 .addLine("${lastTwoMessages[1].first}: ${lastTwoMessages[1].second}")
                 .setSummaryText("+${lastTwoMessages.size - 2} more"))
@@ -250,55 +257,5 @@ class Notifications @Inject constructor(
             .setGroupSummary(true)
 
         notificationManager.notify(0, summaryBuilder.build())
-    }
-
-    @OptIn(UnstableApi::class)
-    fun createMediaNotification(isPlaying: Boolean, mediaSession: MediaSession) {
-        val playPauseAction = if (isPlaying) {
-            val intent = Intent(application, PlaybackManager::class.java).apply {
-                this.action = "pause"
-            }
-
-            NotificationCompat.Action(
-                android.R.drawable.ic_media_pause, "Pause",
-                PendingIntent.getService(application, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-            )
-        } else {
-            val intent = Intent(application, PlaybackManager::class.java).apply {
-                this.action = "play"
-            }
-
-            NotificationCompat.Action(
-                android.R.drawable.ic_media_play, "Play",
-                PendingIntent.getService(application, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-            )
-        }
-
-        val stopIntent = Intent(application, PlaybackManager::class.java).apply {
-            this.action = "stop"
-        }
-
-        val stopAction = NotificationCompat.Action(
-            android.R.drawable.ic_menu_close_clear_cancel, "Stop",
-            PendingIntent.getService(application, 0, stopIntent, PendingIntent.FLAG_IMMUTABLE)
-        )
-
-        val mainActivityIntent = Intent(application, MainActivity::class.java)
-
-        val notification = NotificationCompat.Builder(application, CHANNEL_MEDIA)
-            // Show controls on lock screen even when user hides sensitive content.
-            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            .setSmallIcon(R.drawable.music_note_icon)
-            // Add media control buttons that invoke intents in your media service
-            .addAction(playPauseAction)
-            .addAction(stopAction)
-            .setContentIntent(PendingIntent.getActivity(application, 0, mainActivityIntent, PendingIntent.FLAG_IMMUTABLE))
-            // Apply the media style template.
-            .setStyle(MediaStyleNotificationHelper.MediaStyle(mediaSession)
-                .setShowActionsInCompactView(1 /* #1: pause button \*/))
-            .setContentTitle("Now Playing")
-            .setContentText("Media Audio")
-
-        notificationManager.notify(1, notification.build())
     }
 }
