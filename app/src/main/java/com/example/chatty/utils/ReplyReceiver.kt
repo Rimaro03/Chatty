@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
@@ -53,17 +54,24 @@ class ReplyReceiver: BroadcastReceiver() {
             .setImportant(true)
             .build()
 
+        val you = Person.Builder()
+            .setName("You")
+            .setIcon(IconCompat.createWithResource(context, R.drawable.frigocamelo))
+            .setImportant(true)
+            .build()
+
         // Build a new notification, which informs the user that the system
         // handled their interaction with the previous notification.
         val repliedNotification = NotificationCompat.Builder(context, CHANNEL_NEW_MESSAGE)
             .setSmallIcon(R.drawable.ic_message)
+            .setLargeIcon(BitmapFactory.decodeResource(context.resources, contactIcon))   //this is needed for the big picture style
             .setContentTitle(contactName)
-            .setContentText("You: $message")
             .setStyle(
                 NotificationCompat.MessagingStyle(chatPartner)
                     .addMessage(receivedMessage, System.currentTimeMillis(), chatPartner)
-            )
+                    .addMessage(message, System.currentTimeMillis(), you))
             .build()
+
         // Check for notification permission
         with (NotificationManagerCompat.from(context)) {
             if (ActivityCompat.checkSelfPermission(
