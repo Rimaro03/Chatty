@@ -44,20 +44,19 @@ class ChatRepository @Inject constructor(
 
     // messages
     fun getMessages(chatId: Long) = messageDao.getAllByChatId(chatId)
-    suspend fun clearChatHistory(chatId: Long) = messageDao.deleteAllByChatId(chatId)
     suspend fun clearHistory() = messageDao.deleteAll()
 
     suspend fun sendMessage(content: String, chatId: Long) {
-        val message = Message(
+        val userMessage = Message(
             content = content,
             timestamp = DateTimeFormatter.ISO_INSTANT.format(Instant.now()).toString(),
             chatId = chatId,
             isIncoming = false
         )
 
-        messageDao.insert(message)
+        messageDao.insert(userMessage)
 
-        val chat = getChat(message.chatId).asFlow().first()
+        val chat = getChat(userMessage.chatId).asFlow().first()
 
         val generativeModel = GenerativeModel(
             modelName = "gemini-2.0-flash",
@@ -67,12 +66,12 @@ class ChatRepository @Inject constructor(
             }
         )
 
-        val messageList = getMessages(message.chatId).asFlow().first()
+        val messageList = getMessages(userMessage.chatId).asFlow().first()
         val chatContents = messageList.map { Content.Builder().text(it.content).build() }.toList()
 
         val chatBot = generativeModel.startChat(chatContents)
         val response = try {
-            chatBot.sendMessage(message.content).text ?: "..."
+            chatBot.sendMessage(userMessage.content).text ?: "..."
         } catch (e: Exception) {
             e.printStackTrace()
             e.message
@@ -80,22 +79,22 @@ class ChatRepository @Inject constructor(
 
         kotlinx.coroutines.delay(2000)
         if (response != null) {
-            val message = Message(
+            val botMessage = Message(
                 content = response,
                 timestamp = DateTimeFormatter.ISO_INSTANT.format(Instant.now()).toString(),
-                chatId = message.chatId,
+                chatId = userMessage.chatId,
                 isIncoming = true,
                 read = false
             )
 
-            val messageId = messageDao.insert(message)
-            message.id = messageId
-            Log.d ("ChatRepository", "Message received: ${message.content}")
-            if(message.chatId == currentChatId) {
+            val messageId = messageDao.insert(botMessage)
+            botMessage.id = messageId
+            Log.d ("ChatRepository", "Message received: ${botMessage.content}")
+            if(botMessage.chatId == currentChatId) {
                 messageDao.markAsRead(messageId)
             }
             else {
-                notifications.showNotification(message, chat)
+                notifications.showNotification(botMessage, chat)
                 //notifications.showBubbleNotification(message, chat)
             }
         }
@@ -104,8 +103,8 @@ class ChatRepository @Inject constructor(
     suspend fun markAllAsRead(chatId: Long) = messageDao.markAllAsRead(chatId)
 
     // PLAYER
-    fun play(url: String) {
-        playbackManager.startPlayback(url)
+    fun play(chat: Chat) {
+        playbackManager.startPlayback(chat)
     }
 
     fun stop() {
