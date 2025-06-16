@@ -2,7 +2,6 @@ package com.example.chatty.ui.message
 
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -22,11 +21,6 @@ class MessageViewModel @Inject constructor(
     private val chatRepository: ChatRepository,
     private val iconNotification: ImageNotification
 ): ViewModel() {
-
-    init {
-        Log.d("MessageViewModel", "MessageViewModel created")
-    }
-
     // changed from UI by clicking on contact
     private val _chatId = MutableLiveData(0L)
 
@@ -75,7 +69,6 @@ class MessageViewModel @Inject constructor(
 
     // PLAYER
     fun playAudio() {
-        Log.d("MessageViewModel", "Playing ${chat.value!!.audio}")
         chatRepository.play(chat.value!!)
     }
     fun stopAudio() = chatRepository.stop()
@@ -83,7 +76,5 @@ class MessageViewModel @Inject constructor(
     override fun onCleared() {
         super.onCleared()
         chatRepository.releasePlayer()
-
-        Log.d("MessageViewModel", "MessageViewModel destroyed")
     }
 }

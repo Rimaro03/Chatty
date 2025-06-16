@@ -7,13 +7,9 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.content.pm.ShortcutInfo
-import android.content.pm.ShortcutManager
 import android.graphics.BitmapFactory
-import android.graphics.drawable.Icon
 import android.os.Build
 import android.os.VibrationEffect
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.Person
 import androidx.core.app.RemoteInput
@@ -36,10 +32,6 @@ class Notifications @Inject constructor(
 ) {
     private val appContext = application.applicationContext
     private val notificationManager = appContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-    init {
-        Log.d("Notifications", "Notification created")
-    }
 
     companion object {
         private const val KEY_TEXT_REPLY = "quick_reply"
@@ -120,13 +112,9 @@ class Notifications @Inject constructor(
         if (lastTwoMessages[0].first == chat.name) {
             // I update the message with the current new message
             lastTwoMessages[0] = chat.name to message.content
-            Log.d("Notifications", "Name[0]: ${lastTwoMessages[0].first}, Message[0]: ${lastTwoMessages[0].second}")
-            Log.d("Notifications", "Name[1]: ${lastTwoMessages[1].first}, Message[1]: ${lastTwoMessages[1].second}")
         } else {
             lastTwoMessages[1] = lastTwoMessages[0]
             lastTwoMessages[0] = chat.name to message.content
-            Log.d("Notifications", "Name[0]: ${lastTwoMessages[0].first}, Message[0]: ${lastTwoMessages[0].second}")
-            Log.d("Notifications", "Name[1]: ${lastTwoMessages[1].first}, Message[1]: ${lastTwoMessages[1].second}")
         }
 
         // Notification action: open chat (message fragment) of the provided contact (senderId)

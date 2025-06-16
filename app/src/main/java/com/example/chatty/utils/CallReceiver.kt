@@ -3,7 +3,6 @@ package com.example.chatty.utils
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import com.example.chatty.R
 
 class CallReceiver : BroadcastReceiver() {
@@ -11,12 +10,10 @@ class CallReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         when (intent.action) {
             "DECLINE_CALL" -> {
-                Log.d("CallReceiver", "Declining call")
                 val callIntent = Intent(context, FakeCallService::class.java)
                 context.stopService(callIntent)
             }
             "ANSWER_CALL" -> {
-                Log.d("CallReceiver", "Answering call")
                 val callIntent = Intent(context, FakeCallService::class.java)
                 context.stopService(callIntent)
 

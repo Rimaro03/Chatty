@@ -1,6 +1,5 @@
 package com.example.chatty.ui.home
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,7 +32,6 @@ class ContactAdapter(
             // set image with contact.icon
             itemView.setOnClickListener {
                 onChatClicked(chat)
-                Log.d("ContactAdapter", "onChatClicked: $chat")
             }
             // trim last message to 30 characters
             contactLastMsgTv.text = lastMessage?.take(30)

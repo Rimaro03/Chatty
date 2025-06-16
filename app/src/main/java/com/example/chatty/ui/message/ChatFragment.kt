@@ -1,7 +1,6 @@
 package com.example.chatty.ui.message
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,10 +28,6 @@ import kotlinx.coroutines.launch
 class ChatFragment: Fragment() {
     private val messageViewModel: MessageViewModel by hiltNavGraphViewModels(R.id.nav_graph)
 
-    companion object {
-        private val TAG = ChatFragment::class.java.simpleName
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -41,7 +36,6 @@ class ChatFragment: Fragment() {
         // get contact id from HomeFragment
         val contactId = arguments?.getString("contactId")?.toLong()
         if(contactId == null) {
-            Log.e(TAG, "Couldn't fetch contactId")
             requireActivity().finishAndRemoveTask()
             return null
         }

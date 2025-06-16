@@ -1,7 +1,6 @@
 package com.example.chatty.utils
 
 import android.app.Application
-import android.util.Log
 import androidx.core.net.toUri
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
@@ -43,7 +42,6 @@ class PlaybackManager @Inject constructor(
     }
 
     fun release() {
-        Log.d("PlaybackManager", "PlaybackManager released")
         player.release()
         mediaSession.release()
     }

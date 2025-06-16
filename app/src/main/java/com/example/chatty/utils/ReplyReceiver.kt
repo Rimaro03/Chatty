@@ -1,15 +1,12 @@
 package com.example.chatty.utils
 
 import android.Manifest
-import android.app.Application
-import android.app.Notification
 import android.app.RemoteInput
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
-import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -17,7 +14,6 @@ import androidx.core.app.Person
 import androidx.core.graphics.drawable.IconCompat
 import dagger.hilt.android.AndroidEntryPoint
 import com.example.chatty.R
-import com.example.chatty.models.Chat
 import com.example.chatty.repository.ChatRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -79,7 +75,6 @@ class ReplyReceiver: BroadcastReceiver() {
                     Manifest.permission.POST_NOTIFICATIONS
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
-                Log.e(ReplyReceiver::class.java.toString(), "Permission not granted")
                 return@with
             }
         }

@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.IBinder
 import androidx.core.app.Person
 import com.example.chatty.R
-import android.util.Log
 import com.example.chatty.notifications.CallNotification
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -53,7 +52,6 @@ class FakeCallService: Service() {
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.d("FakeCallService", "Service destroyed")
         val intent = Intent("CALL_ENDED")
         sendBroadcast(intent)
     }

@@ -1,7 +1,6 @@
 package com.example.chatty.ui.home
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,8 +14,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatty.R
@@ -69,7 +66,6 @@ class HomeFragment: Fragment() {
         val contactRecyclerView = view.findViewById<RecyclerView>(R.id.contact_rv_list)
         contactRecyclerView.layoutManager = LinearLayoutManager(view.context)
         fun onContactClick(chat: Chat) {
-            Log.d("HomeFragment", "navigated");
             val deepLinkReq = NavDeepLinkRequest.Builder
                 .fromUri("chatty://chat/${chat.id}".toUri())
                 .build()
@@ -79,7 +75,6 @@ class HomeFragment: Fragment() {
         val adapter = ContactAdapter(mutableListOf<ChatWithLastMessage>(), ::onContactClick)
         contactRecyclerView.adapter = adapter
         homeViewModel.chatWithLastMessageList.observe(viewLifecycleOwner) { chatList ->
-            Log.d("HomeFragment", "chatList: $chatList")
             // Disabling chat with myself (0L is my ID)
             adapter.submitList(chatList.filter { it.chat.id != 0L })
         }
