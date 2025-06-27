@@ -16,10 +16,18 @@ class PlaybackManager @Inject constructor(
     application: Application,
     private val mediaNotification: MediaNotification
 ) {
+    private val context = application.applicationContext
     private var player: ExoPlayer = ExoPlayer.Builder(application.applicationContext).build()
     private var mediaSession = MediaSession.Builder(application.applicationContext, player).build()
+    private var initialized = true
 
     fun startPlayback(chat: Chat) {
+        if(!initialized)
+        {
+            player = ExoPlayer.Builder(context).build()
+            mediaSession = MediaSession.Builder(context, player).build()
+        }
+
         val mediaMetadata = MediaMetadata.Builder()
             .setTitle("My presentation")
             .setArtist(chat.name)
@@ -44,5 +52,6 @@ class PlaybackManager @Inject constructor(
     fun release() {
         player.release()
         mediaSession.release()
+        initialized = false
     }
 }
